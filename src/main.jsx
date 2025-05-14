@@ -1,11 +1,16 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import CssBaseline from '@mui/material/CssBaseline';
-import App from './App.jsx'
+// src/main.jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import theme from './theme'
+import { Experimental_CssVarsProvider as CssVarProvider } from '@mui/material/styles'
+import { CssBaseline } from '@mui/material'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <CssBaseline />
-    <App />
-  </StrictMode>,
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <CssVarProvider theme={theme}>
+      <CssBaseline/>
+      <App />
+    </CssVarProvider>
+  </React.StrictMode>
 )
