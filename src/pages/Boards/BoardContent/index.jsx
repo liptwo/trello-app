@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import Theme from '../../../theme'
+import Theme from '~/theme'
 
 const BoardContent = () => {
   return (
