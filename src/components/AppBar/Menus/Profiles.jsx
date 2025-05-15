@@ -32,7 +32,7 @@ const Profiles = () => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        sx={{padding: 0, minWidth: 0}}
+        sx={{ padding: 0, minWidth: 0 }}
       >
         <Avatar sx={{ width: 32, height: 32 }}
           src={bear}
