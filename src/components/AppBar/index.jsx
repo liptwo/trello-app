@@ -33,7 +33,7 @@ const AppBar = () => {
         alignItems: 'center',
         gap: 2
       }}>
-        <AppsIcon sx={ { color:'primary.main', cursor:'pointer' } }/>
+        <AppsIcon fontSize="medium" sx={ { color:'primary.main', cursor:'pointer' } }/>
         <Box sx={{
           display: 'flex',
           gap: 0.5,
@@ -56,18 +56,19 @@ const AppBar = () => {
       }}>
         <TextField
           id="outlined-search"
-          label="Search field"
+          label="Search..."
+          variant="outlined"
           type="search"
           size="small"
         />
         <ModeSelect />
         <Tooltip title="Notifications" arrow>
           <Badge color="secondary" variant="dot" sx={ { cursor:'pointer' } }>
-            <NotificationsNoneIcon />
+            <NotificationsNoneIcon sx={{color:'primary.main'}} />
           </Badge>
         </Tooltip>
         <Tooltip title="Help" arrow>
-          <HelpOutlineIcon sx={ { cursor:'pointer' } } />
+          <HelpOutlineIcon sx={ { color:'primary.main', cursor:'pointer' } } />
         </Tooltip>
         <Profiles />
       </Box>
