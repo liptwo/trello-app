@@ -2,10 +2,15 @@
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 // import { blue, deepOrange, orange, teal } from '@mui/material/colors'
 
+const HEAD_HEIGHT = '58px'
+const BOARD_BAR_HEIGHT = '60px'
+const BOARD_CONTENT_HEIGHT = `calc(100vh - ${ HEAD_HEIGHT} - ${BOARD_BAR_HEIGHT})`
+
 const theme = extendTheme({
   trello: {
-    headHeight: 58,
-    boardBarHeight: 60
+    headHeight: HEAD_HEIGHT,
+    boardBarHeight: BOARD_BAR_HEIGHT,
+    boardContentHeight: BOARD_CONTENT_HEIGHT
   },
   colorSchemes: {
     // light: {
@@ -27,23 +32,32 @@ const theme = extendTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          '*::webkit-scrollbar': {
+          '*::-webkit-scrollbar': {
             width: '8px',
             height: '8px'
           },
-          '*::webkit-scrollbar-thumb': {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
-            borderRadius: '4px'
-          }
+          '*::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(219, 228, 227, 0.61)',
+            borderRadius: '8px'
+          },
+          '*::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: 'rgb(207, 218, 233)' }
         }
       }
     },
     MuiButton: {
       styleOverrides: {
-        root: {
+        body1: {
           textTransform: 'none',
           borderWidth: '0.5px',
           '&:hover': { borderWidth:'0.5px' }
+        }
+      }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          '&.MuiTypography-body1':{ fontSize: '0.875rem' }
         }
       }
     },

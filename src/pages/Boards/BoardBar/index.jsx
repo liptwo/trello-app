@@ -37,7 +37,7 @@ const BoardBar = () => {
       borderBottom: '1px solid',
       borderColor: 'primary.main',
       overflow: 'hidden',
-      backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#547792' : 'primary.light')
+      backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#004065' : '#005c91')
     }}>
       <Box sx={{ display: { xs:'none', md:'flex' }, gap: 2, alignItems: 'center' }}>
         <Chip sx={munus_style} icon={<DashboardIcon sx={ { color: 'primary.main' } } />}
@@ -70,6 +70,10 @@ const BoardBar = () => {
               height:34,
               fontSize:16,
               border:'none'
+            },
+            '& .MuiAvatar-colorDefault':{
+              color:  (theme) => (theme.palette.mode === 'dark' ? '#000000' : 'white'),
+              backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#F2F2F2' : '#a4b0de ')
             }
           }}>
           <Tooltip title="Liptwo">
