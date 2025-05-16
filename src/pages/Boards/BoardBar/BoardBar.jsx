@@ -34,7 +34,6 @@ const BoardBar = () => {
       justifyContent: 'space-between',
       padding: '0 20px',
       gap: 2,
-      borderBottom: '1px solid',
       borderColor: 'primary.main',
       overflow: 'hidden',
       backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#004065' : '#005c91')
