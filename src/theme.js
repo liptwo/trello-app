@@ -5,14 +5,32 @@ import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 const HEAD_HEIGHT = '58px'
 const BOARD_BAR_HEIGHT = '60px'
 const BOARD_CONTENT_HEIGHT = `calc(100vh - ${ HEAD_HEIGHT} - ${BOARD_BAR_HEIGHT})`
+const HEAD_COLUMN_HEIGHT = '45px'
+const FOOTER_COLUMN_HEIGHT = '56px'
 
 const theme = extendTheme({
   trello: {
     headHeight: HEAD_HEIGHT,
     boardBarHeight: BOARD_BAR_HEIGHT,
-    boardContentHeight: BOARD_CONTENT_HEIGHT
+    boardContentHeight: BOARD_CONTENT_HEIGHT,
+    headColumnHeight: HEAD_COLUMN_HEIGHT,
+    footerColumnHeight: FOOTER_COLUMN_HEIGHT
   },
   colorSchemes: {
+    light: {
+      palette: {
+        text: {
+          primary: '#172b4d'
+        }
+      }
+    },
+    dark: {
+      palette: {
+        text: {
+          primary: '#b6c2cf'
+        }
+      }
+    }
     // light: {
     //   palette: {
     //     primary:blue,
@@ -47,7 +65,7 @@ const theme = extendTheme({
     },
     MuiButton: {
       styleOverrides: {
-        body1: {
+        root: {
           textTransform: 'none',
           borderWidth: '0.5px',
           '&:hover': { borderWidth:'0.5px' }
@@ -56,9 +74,10 @@ const theme = extendTheme({
     },
     MuiTypography: {
       styleOverrides: {
-        root: {
-          '&.MuiTypography-body1':{ fontSize: '0.875rem' }
-        }
+        root: ({ theme }) => ({
+          '&.MuiTypography-body1':{ fontSize: '0.875rem' },
+          color: theme.palette.mode === 'dark' ? '#b6c2cf' : '#172b4d'
+        })
       }
     },
     MuiInputLabel: {

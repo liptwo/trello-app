@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import ModeSelect from '~/components/ModeSelect'
-import Theme from '~/theme'
+import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import Box from '@mui/material/Box'
 import AppsIcon from '@mui/icons-material/Apps'
 import TrelloIcon from '~/assets/trello.svg?react'
