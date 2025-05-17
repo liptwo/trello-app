@@ -9,6 +9,7 @@ import AvatarGroup from '@mui/material/AvatarGroup'
 import bear from '~/assets/bear.png'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { capitalizeFirstLetter } from '~/utils/fomatters'
 
 
 const munus_style = {
@@ -24,7 +25,7 @@ const munus_style = {
     backgroundColor: 'primary.50'
   }
 }
-const BoardBar = () => {
+const BoardBar = ({ board }) => {
   return (
     <Box px={2} sx={{
       width: '100vw',
@@ -40,10 +41,10 @@ const BoardBar = () => {
     }}>
       <Box sx={{ display: { xs:'none', md:'flex' }, gap: 2, alignItems: 'center' }}>
         <Chip sx={munus_style} icon={<DashboardIcon sx={ { color: 'primary.main' } } />}
-          label="Liptwo trello nè"
+          label={board.title}
           clickable onClick={( ) => { }}/>
         <Chip sx={munus_style} icon={<VpnLockIcon sx={ { color: 'primary.main' } } />}
-          label="Public/Private Workspace"
+          label={capitalizeFirstLetter(board?.type)}
           clickable onClick={() => {}}/>
         <Chip sx={munus_style} icon={<AddToDriveIcon sx={ { color: 'primary.main' } } />}
           label="Add To Google Drive"
