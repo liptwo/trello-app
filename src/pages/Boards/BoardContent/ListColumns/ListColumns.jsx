@@ -3,7 +3,7 @@ import Column from './Column/Column'
 import Button from '@mui/material/Button'
 import AddIcon from '@mui/icons-material/Add'
 
-const ListColumns = () => {
+const ListColumns = ({ columns }) => {
   return (
     <Box sx={{ bgcolor:'inhenrit',
       display: 'flex',
@@ -14,8 +14,7 @@ const ListColumns = () => {
       height:'100%',
       '&::-webkit-scrollbar-track':{ m:2 }
     }}>
-      <Column />
-      <Column />
+      {columns?.map(column => <Column key={column._id} column={ column }/>)}
       {/* box add new column */}
       <Box sx={{
         color:'white',
