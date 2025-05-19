@@ -33,6 +33,7 @@ export default [
       'react/prop-types': 0,
       'react/display-name': 0,
       'no-console': 1,
+      'no-extra-boolean-cast':0,
       'no-lonely-if': 1,
       'no-trailing-spaces': 1,
       'no-multi-spaces': 1,
