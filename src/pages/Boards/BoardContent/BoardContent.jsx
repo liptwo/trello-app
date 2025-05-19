@@ -8,18 +8,18 @@ import { DndContext,
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
-  // closestCorners,
   pointerWithin,
-  rectIntersection,
+  // rectIntersection,
   closestCorners,
-  getFirstCollision,
-  closestCenter
+  getFirstCollision
+  // closestCenter
 } from '@dnd-kit/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceHolderCard } from '~/utils/fomatters'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_COLUMN',
@@ -82,6 +82,11 @@ const BoardContent = ({ board }) => {
       if ( nextActiveColumn ) {
         // xoa card o column cu
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+        // fix empty columncolumn
+        if (isEmpty(nextActiveColumn.cards)) {
+          // console.log('card cuối cùng bị kéo đi')
+          nextActiveColumn.cards = [generatePlaceHolderCard(nextActiveColumn)]
+        }
         // cap nhap lai mang cardid
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
       }
@@ -97,8 +102,11 @@ const BoardContent = ({ board }) => {
           { ...activeDraggingCardData,
             columnId: nextOverColumn._id }
         )
+        // xóa PlaceHolder card
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         // cap nhap lai mang cardId cot over
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+        // console.log(nextOverColumn)
       }
 
       return nextColumns
