@@ -35,7 +35,7 @@ const ListColumns = ({ columns }) => {
               color:'white',
               width: '100%',
               justifyContent:'flex',
-              '&:hover': {backgroundColor:(theme) => (theme.palette.mode === 'dark' ? '#33779d' : '#3394cc')},
+              '&:hover': { backgroundColor:(theme) => (theme.palette.mode === 'dark' ? '#33779d' : '#3394cc') },
               py:1
             }}>
             Add New Column

@@ -30,6 +30,8 @@ function Card({ card }) {
 
     <MuiCard ref={setNodeRef} style={dndColumnStyle} {...attributes} {...listeners}
       sx={{ cursor:'pointer', overflow:'unset', boxShadow:'0px 1px 1px #091e4240, 0px 0px 1px #091e424f', borderRadius: (card.cover ? '12px':'8px')
+        , display: card?.FE_PlaceholderCard ? 'none' : 'block'
+
       }}>
       {card?.cover && (
         <CardMedia
