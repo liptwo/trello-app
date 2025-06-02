@@ -1,0 +1,28 @@
+import {
+  MouseSensor as LibMouseSensor,
+  KeyboardSensor as LibKeyboardSensor
+} from '@dnd-kit/core'
+
+class MouseSensor extends LibMouseSensor {
+  static activators = [
+    {
+      eventName: 'onMouseDown',
+      handler: ({ nativeEvent: event }) => {
+        return shouldHandleEvent(event.target)
+      }
+    }
+  ];
+}
+
+function shouldHandleEvent(element) {
+  let cur = element
+
+  while (cur) {
+    if (cur.dataset && cur.dataset.noDnd) {
+      return false
+    }
+    cur = cur.parentElement
+  }
+
+  return true
+}

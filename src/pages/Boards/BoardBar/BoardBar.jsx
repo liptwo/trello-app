@@ -40,9 +40,11 @@ const BoardBar = ({ board }) => {
       backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#004065' : '#005c91')
     }}>
       <Box sx={{ display: { xs:'none', md:'flex' }, gap: 2, alignItems: 'center' }}>
-        <Chip sx={munus_style} icon={<DashboardIcon sx={ { color: 'primary.main' } } />}
-          label={board.title}
-          clickable onClick={( ) => { }}/>
+        <Tooltip title={board?.description}>
+          <Chip sx={munus_style} icon={<DashboardIcon sx={ { color: 'primary.main' } } />}
+            label={ board?.title|| ''}
+            clickable onClick={( ) => { }}/>
+        </Tooltip>
         <Chip sx={munus_style} icon={<VpnLockIcon sx={ { color: 'primary.main' } } />}
           label={capitalizeFirstLetter(board?.type)}
           clickable onClick={() => {}}/>
