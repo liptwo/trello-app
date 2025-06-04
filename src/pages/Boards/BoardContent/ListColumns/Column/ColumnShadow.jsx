@@ -17,6 +17,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import Tooltip from '@mui/material/Tooltip'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
+import mapOrder from '~/utils/sort'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { TextField } from '@mui/material'
@@ -62,7 +63,7 @@ const Column = ({ column, createdNewCard }) => {
     opacity: isDragging ? 0.5 : undefined
   }
 
-  const orderedCards = column.cards
+  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
 
   const [anchorEl, setAnchorEl] = useState(null)
@@ -78,6 +79,7 @@ const Column = ({ column, createdNewCard }) => {
       <Box
         {...listeners}
         sx={{
+          display:'hidden',
           minWidth:'300px',
           maxWidth:'300px',
           backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#f1f2f4'),
