@@ -22,9 +22,10 @@ import { CSS } from '@dnd-kit/utilities'
 import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 
 
-const Column = ({ column, createdNewCard }) => {
+const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({ id: column._id, data: { ...column } })
 
@@ -73,6 +74,32 @@ const Column = ({ column, createdNewCard }) => {
   const handleClose = () => {
     setAnchorEl(null)
   }
+
+  // xử lý xóa column
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn = async () => {
+    confirmDeleteColumn({
+      title: 'Delete Column',
+      description: 'This column will be permanently delete, Are you sure to delete!',
+      confirmationText: 'Delete!',
+      // dialogProps: { maxWidth:'xs' },
+      // confirmationButtonProps: { color: 'error', variant: 'outlined' },
+      // cancellationButtonProps: { color: 'inherit' },
+      // allowClose: false
+      // cai nay dung de nhập promt đúng thì mới cho confirm
+      // confirmationKeyword
+
+      //buttonOrder: ['cancel', 'confirm'] dùng để đảo vi tri nút confỉm và cancel
+    }).then(() => {
+      // console.log('🚀 ~ :87 ~ handleDeleteColumn ~ column._id:', column._id)
+      deleteColumnDetails(column._id)
+    }).catch(() => {})
+
+  }
+
+
+
+  // phải bọc div vì vấn đề lỗi chiều dài sẽ kéo dài cả màn hình
   return (
     <div ref={setNodeRef} style={dndColumnStyle} {...attributes} >
       <Box
@@ -118,14 +145,28 @@ const Column = ({ column, createdNewCard }) => {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-button-expand'
               }}
             >
 
-              <MenuItem>
-                <ListItemIcon> <AddCardIcon fontSize="small" /> </ListItemIcon>
-                <ListItemText>Add a new Card</ListItemText>
+              <MenuItem
+                onClick={toggleOpenNewCardForm}
+                sx={{
+                  '&:hover': {
+                    color: 'success.light',
+                    '& .add-new-card': {
+                      color: 'success.light'
+                    },
+                    '& .MuiTypography-body1': {
+                      color: 'success.light'
+                    }
+                  }
+                }}
+              >
+                <ListItemIcon> <AddCardIcon className='add-new-card' fontSize="small" /> </ListItemIcon>
+                <ListItemText className='add-new-card'>Add a new Card</ListItemText>
               </MenuItem>
               <MenuItem>
                 <ListItemIcon> <ContentCopy fontSize="small" /> </ListItemIcon>
@@ -141,9 +182,22 @@ const Column = ({ column, createdNewCard }) => {
               </MenuItem>
 
               <Divider />
-              <MenuItem>
+              <MenuItem
+                onClick={handleDeleteColumn}
+                sx={{
+                  '&:hover': {
+                    color: 'warning.dark',
+                    '& .delete-card': {
+                      color: 'warning.dark'
+                    },
+                    '& .MuiTypography-body1': {
+                      color: 'warning.dark'
+                    }
+                  }
+                }}
+              >
                 <ListItemIcon>
-                  <DeleteOutlineIcon fontSize="small" />
+                  <DeleteOutlineIcon className='delete-card' fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Remove this column</ListItemText>
               </MenuItem>
