@@ -7,13 +7,14 @@ import { useState } from 'react'
 import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
+// import { createNewColumnAPI } from '~/apis'
 
-const ListColumns = ({ columns }) => {
+const ListColumns = ({ columns, createdNewColumn, createdNewCard }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
   const [titleColumn, setTitleColumn] = useState('')
 
-  const addNewColumn = () => {
+  const addNewColumn = ( ) => {
     if ( !titleColumn ) {
       toast.error('Please enter title Column!')
       return
@@ -22,13 +23,15 @@ const ListColumns = ({ columns }) => {
       toast.error('quá 30 kí tự rồi anh bạn à')
       return
     }
-    const title = titleColumn
+    // goji api o day
+    const newColumnData = {
+      title: titleColumn
+    }
 
-
-    console.log(titleColumn)
+    createdNewColumn( newColumnData )
+    // close state
     toggleOpenNewColumnForm()
     setTitleColumn('')
-
   }
 
   return (
@@ -45,7 +48,7 @@ const ListColumns = ({ columns }) => {
         height:'100%',
         '&::-webkit-scrollbar-track':{ m:2 }
       }}>
-        {columns?.map(column => <Column key={column._id} column={ column }/>)}
+        {columns?.map(column => <Column key={column._id} column={ column } createdNewCard={ createdNewCard }/>)}
         {/* box add new column */}
         {!openNewColumnForm ? (
           <Box sx={{

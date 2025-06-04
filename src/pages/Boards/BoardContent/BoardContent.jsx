@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
-import mapOrder from '~/utils/sort'
 import { DndContext,
   useSensor,
   useSensors,
@@ -26,7 +25,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_CARD'
 }
 
-const BoardContent = ({ board }) => {
+const BoardContent = ({ board, createdNewColumn, createdNewCard, moveColumns, moveCardsInColumn, moveCardsOutColumn }) => {
   // Require the mouse to move by 10 pixels before activating
   // const pointerSensors = useSensor(PointerSensor,
   //   { activationConstraint: { distance: 10 } }
@@ -49,7 +48,7 @@ const BoardContent = ({ board }) => {
   // diem va cham cuoi cung video 37
   const lastOverId = useRef(null)
   useEffect(() => {
-    setOrderColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    setOrderColumns(board.columns)
   }, [board])
 
   // di chuyen card giua cac column khac nhau
@@ -60,7 +59,8 @@ const BoardContent = ({ board }) => {
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderColumns(prevColumns => {
       // tim index cua overcard
@@ -109,6 +109,18 @@ const BoardContent = ({ board }) => {
         // console.log(nextOverColumn)
       }
 
+      if (triggerFrom === 'handleDragEnd') {
+        // co the dung activeDragItemData.columnId hoac tot nhat la oldColumnWhenDraggingCard._id,
+        // de cap nhap vao state tai buoc handleDragStart chu khong phai activeData trong scope handleDragEnd
+        // vi sau nay khi di qua drag over va toi day la state cua card da bi cap nhap 1 lan roi
+        moveCardsOutColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        )
+      }
+
       return nextColumns
     })
   }
@@ -120,7 +132,7 @@ const BoardContent = ({ board }) => {
   const handleDragStart = (event) => {
     // console.log('handleDragStart: ', event)
     setActiveDragItemId(event?.active?.id)
-    setActiveDragItemType(event?.active?.data?.current?.columnId ? ACTIVE_DRAG_ITEM_TYPE.CARD:ACTIVE_DRAG_ITEM_TYPE.COLUMN)
+    setActiveDragItemType(event?.active?.data?.current?.columnId ? ACTIVE_DRAG_ITEM_TYPE.CARD : ACTIVE_DRAG_ITEM_TYPE.COLUMN)
     setActiveDragItemData(event?.active?.data?.current)
 
     if (event?.active?.data?.current?.columnId) {
@@ -130,11 +142,7 @@ const BoardContent = ({ board }) => {
   //trigger when drag
   const handleDragOver = (event) => {
     // do nothing when drag column
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
-      // console.log('drag and drop column, current do nothing')
-      return
-    }
-
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) return
     // console.log('handleDragOver: ', event)
     //if drag card will add process to drag card over each column
     const { active, over } = event
@@ -158,7 +166,8 @@ const BoardContent = ({ board }) => {
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
     }
 
@@ -175,7 +184,7 @@ const BoardContent = ({ board }) => {
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
       // console.log('handleDragOver: ', event)
 
-      // card is dragging0
+      // card is dragging
       const { id: activeDraggingCardId, data: { current: activeDraggingCardData } } = active
       // card is over
       const { id: overCardId } = over
@@ -189,7 +198,6 @@ const BoardContent = ({ board }) => {
       // console.log('activeDraggingCardData', activeDragItemData)
 
       if (oldColumnWhenDraggingCard._id !== overColumn._id) {
-
         // console.log('Hành động kéo thả card giữa 2 column khac nhau')
         dragCardOverDiffentColumn(
           overColumn,
@@ -198,7 +206,8 @@ const BoardContent = ({ board }) => {
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
         // console.log('Hanh động kéo thả card cùng 1 column')
@@ -207,13 +216,21 @@ const BoardContent = ({ board }) => {
         // arraymove sort aray
         // same when boardcontent
         const dndOrderedCards = arrayMove(oldColumnWhenDraggingCard?.cards, oldCardIndex, newCardIndex)
+        const dedOrderedCardIds = dndOrderedCards.map(card => card._id)
+
+        // set state truoc de tranh bi delay samll trick
         setOrderColumns(prevColumns => {
           const nextColumns = cloneDeep(prevColumns)
           const targetColumn = nextColumns.find(c => c._id === overColumn._id)
           targetColumn.cards = dndOrderedCards
-          targetColumn.cardOrderIds = dndOrderedCards.map(card => card._id)
+          targetColumn.cardOrderIds = dedOrderedCardIds
           return nextColumns
         })
+
+        // goi api de cap nhap card khi ma co vi tri moi
+        if (oldCardIndex !== newCardIndex) {
+          moveCardsInColumn( dndOrderedCards, dedOrderedCardIds, oldColumnWhenDraggingCard._id )
+        }
       }
     }
 
@@ -224,9 +241,14 @@ const BoardContent = ({ board }) => {
       const newColumnIndex = orderColumns.findIndex(c => c._id === over.id)
       // arraymove sort aray
       const dndOrderedColumns = arrayMove(orderColumns, oldColumnIndex, newColumnIndex)
-      // use later when call api
-      // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
+
+      // vẫn update column ở phía fe để trách flickring hay delay khi update
       setOrderColumns(dndOrderedColumns)
+
+      // use later when call api
+      // xử lý gọi api để cập nhập vị trí column ở backend
+      moveColumns(dndOrderedColumns)
+
     }
 
     setActiveDragItemId(null)
@@ -246,7 +268,6 @@ const BoardContent = ({ board }) => {
       }
     })
   }
-
   // custom thuật toán phát hiện va chạm để fix bug
   const collisionDectectionStratery = useCallback((args) => {
     // console.log('handleStratery')
@@ -266,7 +287,6 @@ const BoardContent = ({ board }) => {
     let overId = getFirstCollision(pointerInterSections, 'id')
     // console.log(overId)
     if (overId) {
-
       const checkColumn = orderColumns.find(column => column._id === overId)
       if (checkColumn) {
         overId = closestCorners({
@@ -290,14 +310,19 @@ const BoardContent = ({ board }) => {
       collisionDetection={collisionDectectionStratery}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd} sensors={sensors}>
+      onDragEnd={handleDragEnd} sensors={sensors}
+    >
       <Box sx={{
         backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#005485' : '#0079bf'),
         width: '100%',
         height: (theme) => theme.trello.boardContentHeight,
         p: '10px 0'
       }}>
-        <ListColumns columns={ orderColumns } />
+        <ListColumns
+          createdNewColumn={createdNewColumn}
+          columns={ orderColumns }
+          createdNewCard={ createdNewCard }
+        />
         <DragOverlay dropAnimation={dropAnimation}>
           {(!activeDragItemType) && null}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
