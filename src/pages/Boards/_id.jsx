@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import {
   createNewCardAPI,
   createNewColumnAPI,
+  deleteColumnDetailsAPI,
   fetchBoardDetailsAPI,
   moveCardOutColumnAPI,
   updateBoardDetailsAPI,
@@ -15,6 +16,7 @@ import {
 import { isEmpty } from 'lodash'
 import { generatePlaceHolderCard } from '~/utils/fomatters'
 import mapOrder from '~/utils/sort'
+import { toast } from 'react-toastify'
 
 const Board = () => {
 
@@ -62,11 +64,22 @@ const Board = () => {
     const newBoard = { ...board }
     const columnToAdd = newBoard.columns.find(column => column._id === createCard.columnId)
 
+    // if (columnToAdd.cardOrderIds[0].includes('placeholder-card')) {
+    //   columnToAdd.cardOrderIds = []
+    //   columnToAdd.cards = []
+    // }
     if (columnToAdd) {
-      columnToAdd.cards.push(createCard)
-      columnToAdd.cardOrderIds.push(createCard._id)
+      if (columnToAdd.cards.some(card => card.FE_PlaceholderCard)) {
+        // neu mang rong thi ghi đè phần tử placeholder để tránh bug
+        columnToAdd.cards = [createCard]
+        columnToAdd.cardOrderIds = [createCard._id]
+      }
+      else {
+        // column đã có data thì thêm vào cuối
+        columnToAdd.cards.push(createCard)
+        columnToAdd.cardOrderIds.push(createCard._id)
+      }
     }
-    // console.log('columnToAdd', columnToAdd)
     setBoard(newBoard)
   }
   // xu ly keo tha goi api cap nhap lai vi tri column
@@ -117,13 +130,31 @@ const Board = () => {
     newBoard.columnOrderIds = dndOrderedColumnsIds
     setBoard(newBoard)
 
+    let preCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
+    // console.log(preCardOrderIds)
+    // xử lý vấn đề khi kéo card cuối cùng ra khỏi column
+    // có placeholder cần xóa nó đi trước khi gửi dữ liệu lên be
+    if (preCardOrderIds[0].includes('placeholder-card')) { preCardOrderIds = []}
     // goi api xu ly phia be
     moveCardOutColumnAPI({
       currentCardId,
       prevColumnId,
-      preCardOrderIds: dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds,
+      preCardOrderIds,
       nextColumnId,
       nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+    })
+  }
+
+  const deleteColumnDetails = ( columnId ) => {
+    console.log('🚀 ~ :147 ~ deleteColumnDetails ~ columnId:', columnId)
+    // update cho chuẩn state Board
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== columnId)
+    setBoard(newBoard)
+    // gửi api để xóa dưới database be
+    deleteColumnDetailsAPI( columnId ).then( res => {
+      toast.success(res?.deleteResult)
     })
   }
 
@@ -145,6 +176,7 @@ const Board = () => {
         moveColumns={moveColumns}
         moveCardsInColumn={moveCardsInColumn}
         moveCardsOutColumn={moveCardsOutColumn}
+        deleteColumnDetails={deleteColumnDetails}
       />
     </Container>
   )

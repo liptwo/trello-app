@@ -9,7 +9,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 // import { createNewColumnAPI } from '~/apis'
 
-const ListColumns = ({ columns, createdNewColumn, createdNewCard }) => {
+const ListColumns = ({ columns, createdNewColumn, createdNewCard, deleteColumnDetails }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
   const [titleColumn, setTitleColumn] = useState('')
@@ -48,7 +48,7 @@ const ListColumns = ({ columns, createdNewColumn, createdNewCard }) => {
         height:'100%',
         '&::-webkit-scrollbar-track':{ m:2 }
       }}>
-        {columns?.map(column => <Column key={column._id} column={ column } createdNewCard={ createdNewCard }/>)}
+        {columns?.map(column => <Column key={column._id} column={ column } createdNewCard={ createdNewCard } deleteColumnDetails={deleteColumnDetails}/>)}
         {/* box add new column */}
         {!openNewColumnForm ? (
           <Box sx={{

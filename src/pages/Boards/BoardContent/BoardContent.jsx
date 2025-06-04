@@ -25,7 +25,14 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_CARD'
 }
 
-const BoardContent = ({ board, createdNewColumn, createdNewCard, moveColumns, moveCardsInColumn, moveCardsOutColumn }) => {
+const BoardContent = ({ board,
+  createdNewColumn,
+  createdNewCard,
+  moveColumns,
+  moveCardsInColumn,
+  moveCardsOutColumn,
+  deleteColumnDetails
+}) => {
   // Require the mouse to move by 10 pixels before activating
   // const pointerSensors = useSensor(PointerSensor,
   //   { activationConstraint: { distance: 10 } }
@@ -322,6 +329,7 @@ const BoardContent = ({ board, createdNewColumn, createdNewCard, moveColumns, mo
           createdNewColumn={createdNewColumn}
           columns={ orderColumns }
           createdNewCard={ createdNewCard }
+          deleteColumnDetails={deleteColumnDetails}
         />
         <DragOverlay dropAnimation={dropAnimation}>
           {(!activeDragItemType) && null}
