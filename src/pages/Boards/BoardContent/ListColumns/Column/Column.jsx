@@ -23,9 +23,18 @@ import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import { cloneDeep } from 'lodash'
+import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 
-const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
+const Column = ({ column }) => {
+
+
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({ id: column._id, data: { ...column } })
 
@@ -33,7 +42,7 @@ const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
   const [titleCard, setTitleCard] = useState('')
 
-  const addNewCard = () => {
+  const addNewCard = async() => {
     if ( !titleCard ) {
       toast.error('Please enter title Card!', { position: 'bottom-left' })
       toggleOpenNewCardForm()
@@ -50,7 +59,33 @@ const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
       columnId: column._id
     }
 
-    createdNewCard(newCardData)
+    // api tao moi card
+    const newCard = { ...newCardData, boardId: board._id }
+    const createCard = await createNewCardAPI(newCard)
+    // console.log('createdCard: ', createCard)
+
+    // const newBoard = { ...board }
+    const newBoard = cloneDeep(board)
+    const columnToAdd = newBoard.columns.find(column => column._id === createCard.columnId)
+
+    // if (columnToAdd.cardOrderIds[0].includes('placeholder-card')) {
+    //   columnToAdd.cardOrderIds = []
+    //   columnToAdd.cards = []
+    // }
+    if (columnToAdd) {
+      if (columnToAdd.cards.some(card => card.FE_PlaceholderCard)) {
+        // neu mang rong thi ghi đè phần tử placeholder để tránh bug
+        columnToAdd.cards = [createCard]
+        columnToAdd.cardOrderIds = [createCard._id]
+      }
+      else {
+        // column đã có data thì thêm vào cuối
+        columnToAdd.cards.push(createCard)
+        columnToAdd.cardOrderIds.push(createCard._id)
+      }
+    }
+    dispatch(updateCurrentActiveBoard(newBoard))
+
     toggleOpenNewCardForm()
     setTitleCard('')
 
@@ -81,7 +116,7 @@ const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
     confirmDeleteColumn({
       title: 'Delete Column',
       description: 'This column will be permanently delete, Are you sure to delete!',
-      confirmationText: 'Delete!',
+      confirmationText: 'Delete!'
       // dialogProps: { maxWidth:'xs' },
       // confirmationButtonProps: { color: 'error', variant: 'outlined' },
       // cancellationButtonProps: { color: 'inherit' },
@@ -92,11 +127,18 @@ const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
       //buttonOrder: ['cancel', 'confirm'] dùng để đảo vi tri nút confỉm và cancel
     }).then(() => {
       // console.log('🚀 ~ :87 ~ handleDeleteColumn ~ column._id:', column._id)
-      deleteColumnDetails(column._id)
+      // deleteColumnDetails(column._id)
+      const newBoard = { ...board }
+      newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+      newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== column._id)
+      dispatch(updateCurrentActiveBoard(newBoard))
+      // gửi api để xóa dưới database be
+      deleteColumnDetailsAPI( column._id ).then( res => {
+        toast.success(res?.deleteResult)
+      })
     }).catch(() => {})
 
   }
-
 
 
   // phải bọc div vì vấn đề lỗi chiều dài sẽ kéo dài cả màn hình
@@ -263,6 +305,7 @@ const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
             />
             <Box sx={{ display: 'flex', alignItems:'center' }}>
               <Button
+                className='interceptor-loading'
                 onClick={addNewCard}
                 variant='contained'
                 size='small'
@@ -282,10 +325,12 @@ const Column = ({ column, createdNewCard, deleteColumnDetails }) => {
                 display:'flex',
                 '&:hover': { backgroundColor:(theme) => (theme.palette.mode === 'dark' ? '#6d7780' : '#d0d4db') }
               }}>
-                <CloseIcon sx={{
-                  color:(theme) => (theme.palette.mode === 'dark' ? 'white': 'black' ),
-                  fontSize:20
-                }}/>
+                <CloseIcon
+                  onClick={() => setTitleCard('')}
+                  sx={{
+                    color:(theme) => (theme.palette.mode === 'dark' ? 'white': 'black' ),
+                    fontSize:20
+                  }}/>
               </Box>
             </Box>
           </>

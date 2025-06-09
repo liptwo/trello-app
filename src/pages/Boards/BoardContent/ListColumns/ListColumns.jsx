@@ -7,14 +7,23 @@ import { useState } from 'react'
 import { TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
+import { generatePlaceHolderCard } from '~/utils/fomatters'
+import { createNewColumnAPI } from '~/apis'
+import { cloneDeep } from 'lodash'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 // import { createNewColumnAPI } from '~/apis'
 
-const ListColumns = ({ columns, createdNewColumn, createdNewCard, deleteColumnDetails }) => {
+const ListColumns = ({ columns }) => {
+
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
   const [titleColumn, setTitleColumn] = useState('')
 
-  const addNewColumn = ( ) => {
+  const addNewColumn = async () => {
     if ( !titleColumn ) {
       toast.error('Please enter title Column!')
       return
@@ -28,7 +37,43 @@ const ListColumns = ({ columns, createdNewColumn, createdNewCard, deleteColumnDe
       title: titleColumn
     }
 
-    createdNewColumn( newColumnData )
+    // createdNewColumn( newColumnData )
+    const newColumn = {
+      ...newColumnData,
+      boardId: board._id
+    }
+    const createdColumn = await createNewColumnAPI( newColumn )
+    // console.log('createdColumn:', createdColumn)
+    createdColumn.cards = [generatePlaceHolderCard(createdColumn)]
+    createdColumn.cardOrderIds = [generatePlaceHolderCard(createdColumn)._id]
+    // update state board
+    // const newBoard = { ...board } bị lỗi vì push cập nhập trực tiếp với shallow copy
+    // cách 1
+    /**
+    * Đoạn này sẽ dính lồi object is not extensible bởi dù đã copy/clone ra giá trị newBoard nhưng bản chât
+    của spread operator là Shallow Copy/Clone, nên dính phải rules Immutability trong Redux Toolkit không
+    dùng được hàm PUSH (sửa giá trị mảng trực tiếp), cách đơn giản nhanh gọn nhất ở trường hợp này của chúng
+    ta là dùng tới Deep Copy/Clone toàn bộ cái Board cho dễ hiểu và code ngắn gọn.
+    * https://redux-toolkit.js.org/usage/immer-reducers
+    * Tài liệu thêm về Shallow và Deep Copy Object trong JS:
+    * https://www.javascripttutorial.net/object/3-ways-to-copy-objects-in-javascript/
+    */
+    const newBoard = cloneDeep(board)
+    newBoard.columns.push(createdColumn)
+    newBoard.columnOrderIds.push(createdColumn._id)
+
+    // cách 2
+    /**
+    * Ngoài ra cách nữa là vẫn có thể dùng array. concat thay cho push như docs của Redux Toolkit ở trên vì
+    push như đã nói nó sẽ thay đổi giá trị mảng trực tiếp, còn thằng concat thì nó merge - ghép mảng lại và
+    tạo ra một mảng mới để chúng ta gán lại giá trị nên không vân đề gì.
+    */
+    // const newBoard = { ... board }
+    // newBoard.columns = newBoard.columns.concat([createdColumn])
+    // newBoard.columnOrderIds = newBoard.columnOrderIds.concat([createdColumn ._id])
+
+    // setBoard(setBoard)
+    dispatch(updateCurrentActiveBoard(newBoard))
     // close state
     toggleOpenNewColumnForm()
     setTitleColumn('')
@@ -48,18 +93,19 @@ const ListColumns = ({ columns, createdNewColumn, createdNewCard, deleteColumnDe
         height:'100%',
         '&::-webkit-scrollbar-track':{ m:2 }
       }}>
-        {columns?.map(column => <Column key={column._id} column={ column } createdNewCard={ createdNewCard } deleteColumnDetails={deleteColumnDetails}/>)}
+        {columns?.map(column => <Column key={column._id} column={ column }/>)}
         {/* box add new column */}
         {!openNewColumnForm ? (
-          <Box sx={{
-            color:'white',
-            minWidth:'250px',
-            maxWidth:'250px',
-            height:'fit-content',
-            backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#3d7ea3' : '#3d99ce'),
-            mx:2,
-            borderRadius:'6px'
-          }}>
+          <Box
+            sx={{
+              color:'white',
+              minWidth:'250px',
+              maxWidth:'250px',
+              height:'fit-content',
+              backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#3d7ea3' : '#3d99ce'),
+              mx:2,
+              borderRadius:'6px'
+            }}>
             <Button startIcon={<AddIcon />}
               onClick={toggleOpenNewColumnForm}
               sx={{
@@ -109,6 +155,7 @@ const ListColumns = ({ columns, createdNewColumn, createdNewCard, deleteColumnDe
             />
             <Box sx={{ display: 'flex', alignItems:'center' }}>
               <Button
+                className='interceptor-loading'
                 onClick={addNewColumn}
                 variant='contained'
                 size='small'
