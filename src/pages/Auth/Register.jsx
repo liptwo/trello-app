@@ -3,19 +3,28 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import TrelloIcon from '~/assets/trello.svg?react'
 import AppsIcon from '@mui/icons-material/Apps'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import CheckIcon from '@mui/icons-material/Check'
 import Zoom from '@mui/material/Zoom'
 import FieldErrorAlert from '~/components/Alert/Alert'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validators'
+import { registerAPI } from '~/apis'
+import { toast } from 'react-toastify'
 
 export default function RegisterForm() {
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
-  const onSubmit = data => console.log(data)
+  const navigate = useNavigate()
+  const submitRegister = async (data) => {
+    const { email, password } = data
+    toast.promise(registerAPI({ email, password }), { pending: 'Registration is progress ...' }
+    ).then( user => {
+      setTimeout(() => {navigate(`/login?registeredEmail=${user.email}`)}, 2000)
+    })
+  }
   // console.log(errors)
   return (
 
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitRegister)}>
       <Zoom in={true} style={{ transitionDelay: '200ms'}}>
         <MuiCard sx={{ display: 'flex',
           flexDirection: 'column',
@@ -50,10 +59,10 @@ export default function RegisterForm() {
               Hãy nhập các thông tin sau để tạo tài khoản
             </Typography>
           </Box>
-          <Box sx={{ display:'flex', gap:1, flexDirection:'column' }}>
+          {/* <Box sx={{ display:'flex', gap:1, flexDirection:'column' }}>
             <Alert severity="success">This is a success Alert.</Alert>
             <Alert severity="info">This is an info Alert.</Alert>
-          </Box>
+          </Box> */}
           <Box sx={{ marginTop:'0.25em' }}>
             <TextField fullWidth id="outlined-basic-email"
               label="Email"
