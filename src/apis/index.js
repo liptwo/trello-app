@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify'
 import authorizedAxiosInstance from '~/utils/authorizeAxios'
 import { API_ROOT } from '~/utils/constants'
 
@@ -33,7 +34,6 @@ export const updateBoardDetailsAPI = async( boardId, updateData ) => {
   return request.data
 }
 
-
 export const moveCardOutColumnAPI = async( updateData ) => {
   console.log(updateData)
   const request = await authorizedAxiosInstance.put(`${API_ROOT}/v1/boards/support/moving_card`, updateData)
@@ -49,6 +49,25 @@ export const updateColumnDetailsAPI = async( columnId, updateData ) => {
 export const deleteColumnDetailsAPI = async( columnId ) => {
   // console.log(updateData)
   const request = await authorizedAxiosInstance.delete(`${API_ROOT}/v1/columns/${columnId}`)
+  return request.data
+}
+
+export const registerAPI = async ( userInfo ) => {
+  const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/register`, userInfo)
+  toast.success(`Success register ${request.data.email},please check and verify your account before logging in!.`, { theme: 'colored' })
+  return request.data
+}
+
+export const verifyUserApi = async ( data ) => {
+  const request = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/verify`, data)
+  toast.success('Account verified successfully! Now you can login to enjoy to our services!', { theme: 'colored' })
+  return request.data
+}
+
+
+export const loginAPI = async ( data ) => {
+  const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/login`, data)
+  toast.success('Account login successfully!', { theme: 'colored' })
   return request.data
 }
 

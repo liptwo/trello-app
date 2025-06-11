@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Typography } from '@mui/material'
+import { Container } from '@mui/material'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
@@ -17,6 +17,7 @@ import {
 } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 
 
 const Board = () => {
@@ -107,10 +108,7 @@ const Board = () => {
 
   // console.log(board)
   if (!board) {
-    return <Box sx={{ display:'flex', gap:2, width:'100vw', height:'100vh', fontSize:20, alignItems:'center', justifyContent:'center' }}>
-      <CircularProgress />
-      <Typography>Loading board ...</Typography>
-    </Box>
+    return <PageLoadingSpinner caption='Loading Board ...' />
   }
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>

@@ -3,18 +3,27 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import TrelloIcon from '~/assets/trello.svg?react'
 import AppsIcon from '@mui/icons-material/Apps'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Zoom from '@mui/material/Zoom'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Alert/Alert'
+import { loginAPI } from '~/apis'
 
 export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm()
-  const onSubmit = data => console.log(data)
+  let [searchParams] = useSearchParams()
+  const registeredEmail = searchParams.get('registeredEmail')
+  // console.log('🚀 ~ Login.jsx:15 ~ LoginForm ~ registeredEmail:', registeredEmail)
+  const verifiedEmail = searchParams.get('verifiedEmail')
+
+  const submitLogin = async ( data ) => {
+    // console.log('🚀 ~ Login.jsx:18 ~ submitLogin ~ data:', data)
+    const user = await loginAPI(data)
+  }
   // console.log(errors)
   return (
 
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitLogin)}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
         <MuiCard sx={{ display: 'flex',
           flexDirection: 'column',
@@ -50,8 +59,10 @@ export default function LoginForm() {
             </Typography>
           </Box>
           <Box sx={{ display:'flex', gap:1, flexDirection:'column' }}>
-            <Alert severity="success">This is a success Alert.</Alert>
-            <Alert severity="info">This is an info Alert.</Alert>
+            {verifiedEmail && <Alert severity="success">Your email&nbsp; <Typography variant='span' sx={{fontWeight: 'bold', '&:hover':{ color: '#1565c0' }}}>{verifiedEmail}</Typography> has been verified.<br/>
+            now you can login to enjoy our services</Alert>}
+            {registeredEmail && <Alert severity="info">An email has been sent to&nbsp;<Typography variant='span' sx={{ fontWeight: 'bold', '&:hover':{ color: '#1565c0' } }}>{registeredEmail}</Typography><br/>
+            Please check and verify your account before logging in!</Alert>}
           </Box>
           <Box sx={{ marginTop:'1em' }}>
             <TextField
