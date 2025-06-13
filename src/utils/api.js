@@ -18,9 +18,9 @@ axiosApi.interceptors.response.use(
   (error) => {
     if (!error.response) {
       // Lỗi mạng hoặc server không phản hồi
-      alert('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
+      alert('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.')
     } else {
-      const { status, data } = error.response;
+      const { status, data } = error.response
 
       switch (status) {
       case 400:

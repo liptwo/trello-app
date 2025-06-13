@@ -17,6 +17,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
+    "@mui/lab": "^5.0.0-alpha.176",
     "@mui/material": "^5.13.0",
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "^2.8.2",
@@ -29,7 +30,9 @@
     "react-hook-form": "^7.57.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.1",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "redux-persist": "^6.0.0",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

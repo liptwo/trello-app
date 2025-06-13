@@ -51,7 +51,7 @@ const AppBar = () => {
             component={TrelloIcon} fontSize="small" sx={{ color:'white' } } inheritViewBox/>
           <Typography variant='span' sx={{ color:'white', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
         </Box>
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center' }}>
+        <Box sx={{ display: { xs: 'none', md: 'none', lg:'flex' }, gap: 1, alignItems: 'center' }}>
           <WorkSpaces />
           <Recent />
           <Started />
@@ -91,7 +91,7 @@ const AppBar = () => {
             )
           }}
           sx={ { width:'100%', maxWidth: 400, minWidth:120,
-            display:{ xs:'none', md:'flex' },
+            display:{ xs:'flex', md:'flex' },
             '& label':{ color: 'white' },
             '& input':{ color: 'white' },
             '& label.Mui-focused':{ color: 'white' },

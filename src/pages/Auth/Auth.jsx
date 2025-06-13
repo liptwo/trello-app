@@ -1,15 +1,23 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import LoginForm from './Login'
 import RegisterForm from './Register'
 const bg = 'src/assets/loginBg.png'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 
 function Auth() {
   const location = useLocation()
   // console.log(location)
   const isLogin = location. pathname === '/login'
   const isRegister = location. pathname === '/register'
+
+  // cách 1 để xử lý đã đăng nhập
+  const currentUser = useSelector(selectCurrentUser)
+  if ( currentUser ) {
+    return <Navigate to='/' replace={true} />
+  }
 
   return (
     <Box sx={{

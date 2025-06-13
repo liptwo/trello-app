@@ -64,10 +64,10 @@ export const verifyUserApi = async ( data ) => {
   return request.data
 }
 
-
-export const loginAPI = async ( data ) => {
-  const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/login`, data)
-  toast.success('Account login successfully!', { theme: 'colored' })
+export const refreshTokenAPI = async ( data ) => {
+  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`, data)
+  // toast.success('Account verified successfully! Now you can login to enjoy to our services!', { theme: 'colored' })
   return request.data
 }
+
 
