@@ -4,18 +4,17 @@ import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
-import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import Typography from '@mui/material/Typography'
-import ContentCut from '@mui/icons-material/ContentCut'
-import ContentCopy from '@mui/icons-material/ContentCopy'
-import ContentPaste from '@mui/icons-material/ContentPaste'
-import Cloud from '@mui/icons-material/Cloud'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Avatar from '@mui/material/Avatar'
-import bear from '~/assets/bear.png'
+// import bear from '~/assets/bear.png'
+import { logoutUserAPI, selectCurrentUser } from '~/redux/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { Logout, PersonAdd, Settings } from '@mui/icons-material'
+import { useConfirm } from 'material-ui-confirm'
+
 
 const Profiles = () => {
+  const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -24,6 +23,23 @@ const Profiles = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
+  const confirmLogout = useConfirm()
+  const currentUser = useSelector(selectCurrentUser)
+  const handleLogOut = async() => {
+    confirmLogout({
+      title: 'Log out of your account',
+      // description: 'End your sesion?',
+      confirmationText: 'Confirm Logout'
+    }).then(() => {
+      dispatch(logoutUserAPI())
+    }).catch(() => {})
+  }
+
+  // .then( res => {
+  //   // kiểm tra không có lỗi thì mới redirect về route login
+  //   // if ( !res.error ) {Navigate('/login')}
+  // }
+  // )
   return (
     <Box>
       <Button
@@ -35,52 +51,87 @@ const Profiles = () => {
         sx={{ padding: 0, minWidth: 0 }}
       >
         <Avatar sx={{ width: 32, height: 32 }}
-          src={bear}
+          src={currentUser?.avatar}
           alt="Profile"
         />
       </Button>
       <Menu
-        id="basic-menu-profiles"
         anchorEl={anchorEl}
+        id="account-menu"
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button-profiles'
+        onClick={handleClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1
+              },
+              '&::before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0
+              },
+            },
+          },
         }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCut fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Cut</ListItemText>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            ⌘X
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCopy fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Copy</ListItemText>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            ⌘C
-          </Typography>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentPaste fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Paste</ListItemText>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            ⌘V
-          </Typography>
+        <MenuItem
+          sx={{
+            '&:hover':{
+              color: 'success.light',
+              '& .profile-icon':{
+                color: 'success.light'
+              }
+            }
+          }}
+          onClick={handleClose}>
+          <Avatar src={currentUser?.avatar} className='profile-icon' /> Profile
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <Cloud fontSize="small" />
+            <PersonAdd fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Web Clipboard</ListItemText>
+          Add another account
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          sx={{
+            '&:hover':{
+              color: 'warning.light',
+              '& .logout-icon':{
+                color: 'warning.light'
+              }
+            }
+          }}
+          onClick={() => handleLogOut()}>
+          <ListItemIcon>
+            <Logout className='logout-icon' fontSize="small" />
+          </ListItemIcon>
+          Logout
         </MenuItem>
       </Menu>
     </Box>

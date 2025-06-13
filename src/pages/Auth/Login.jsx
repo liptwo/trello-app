@@ -3,22 +3,32 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import TrelloIcon from '~/assets/trello.svg?react'
 import AppsIcon from '@mui/icons-material/Apps'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import Zoom from '@mui/material/Zoom'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Alert/Alert'
-import { loginAPI } from '~/apis'
+import { useDispatch } from 'react-redux'
+import { loginAPI } from '~/redux/user/userSlice'
+import { toast } from 'react-toastify'
 
 export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   let [searchParams] = useSearchParams()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const registeredEmail = searchParams.get('registeredEmail')
   // console.log('🚀 ~ Login.jsx:15 ~ LoginForm ~ registeredEmail:', registeredEmail)
   const verifiedEmail = searchParams.get('verifiedEmail')
 
   const submitLogin = async ( data ) => {
     // console.log('🚀 ~ Login.jsx:18 ~ submitLogin ~ data:', data)
-    const user = await loginAPI(data)
+    const { email, password } = data
+    toast.promise(dispatch( loginAPI({ email, password }) ), { pending: 'Logging progress ...' }
+    ).then( res => {
+      // kiểm tra không có lỗi thì mới redirect về route
+      if ( !res.error ) {navigate('/')}
+    }
+    )
   }
   // console.log(errors)
   return (
