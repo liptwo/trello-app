@@ -6,6 +6,7 @@ import RegisterForm from './Register'
 const bg = 'src/assets/loginBg.png'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+// import TextFlagCursor from '~/components/TextFlagCursor/TextFlagCursor'
 
 function Auth() {
   const location = useLocation()
@@ -32,6 +33,11 @@ function Auth() {
       backgroundPosition: 'center',
       boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.2)'
     }}>
+      {/* <TextFlagCursor
+        text='Liptwo Trello'
+        color='blue'
+        font='monospace'
+        textSize={12} /> */}
       {isLogin && <LoginForm />}
       {isRegister && <RegisterForm />}
     </Box>

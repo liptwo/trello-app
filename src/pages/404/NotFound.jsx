@@ -1,7 +1,7 @@
 import { Box, Button, keyframes, Typography } from '@mui/material'
 import React from 'react'
 import { Link } from 'react-router-dom'
-const bg = 'src/assets/bg.png'
+const bg = './src/assets/bg.png'
 import astronaut from '~/assets/astronaut.png'
 
 // Animation cho astronaut

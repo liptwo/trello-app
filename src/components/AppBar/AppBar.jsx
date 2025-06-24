@@ -20,6 +20,7 @@ import QueueIcon from '@mui/icons-material/Queue'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
+import { Link } from 'react-router-dom'
 
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('')
@@ -49,7 +50,9 @@ const AppBar = () => {
         }}>
           <SvgIcon
             component={TrelloIcon} fontSize="small" sx={{ color:'white' } } inheritViewBox/>
-          <Typography variant='span' sx={{ color:'white', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
+          <Link to={'/'} style={{ textDecoration:'none' }}>
+            <Typography variant='span' sx={{ color:'white', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
+          </Link>
         </Box>
         <Box sx={{ display: { xs: 'none', md: 'none', lg:'flex' }, gap: 1, alignItems: 'center' }}>
           <WorkSpaces />

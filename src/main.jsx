@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import App from '~/App'
 import theme from '~/theme'
 import { Experimental_CssVarsProvider as CssVarProvider } from '@mui/material/styles'
-import { CssBaseline } from '@mui/material'
+import { CssBaseline, GlobalStyles } from '@mui/material'
 // cấu hình toast
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -21,6 +21,7 @@ import persistStore from 'redux-persist/es/persistStore'
 import { PersistGate } from 'redux-persist/integration/react'
 import { injectStore } from './utils/authorizeAxios'
 
+
 injectStore(store)
 
 const persistor = persistStore(store)
@@ -36,6 +37,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             allowClose: false
           }}
           >
+            <GlobalStyles styles={{ a: { textecoration: 'none' } }}/>
+
             <CssBaseline />
             <App />
             <ToastContainer position="bottom-right" autoClose={3000} />

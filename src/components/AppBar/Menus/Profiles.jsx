@@ -11,6 +11,7 @@ import { logoutUserAPI, selectCurrentUser } from '~/redux/user/userSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { Logout, PersonAdd, Settings } from '@mui/icons-material'
 import { useConfirm } from 'material-ui-confirm'
+import { Link } from 'react-router-dom'
 
 
 const Profiles = () => {
@@ -92,18 +93,20 @@ const Profiles = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem
-          sx={{
-            '&:hover':{
-              color: 'success.light',
-              '& .profile-icon':{
-                color: 'success.light'
+        <Link to={'/settings/account'} style={{ textDecoration:'none' }}>
+          <MenuItem
+            sx={{
+              '&:hover':{
+                color: 'success.light',
+                '& .profile-icon':{
+                  color: 'success.light'
+                }
               }
-            }
-          }}
-          onClick={handleClose}>
-          <Avatar src={currentUser?.avatar} className='profile-icon' /> Profile
-        </MenuItem>
+            }}
+            onClick={handleClose}>
+            <Avatar src={currentUser?.avatar} className='profile-icon' /> Profile
+          </MenuItem>
+        </Link>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>

@@ -16,7 +16,7 @@ export const loginAPI = createAsyncThunk (
   'user/loginAPI', async ( data ) => {
     const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/login`, data)
     // toast.success('Account login successfully!', { theme: 'colored' })
-    console.log('🚀 ~ userSlice.js:21 ~ user/loginAPI, ~ request.data:', request.data)
+    // console.log('🚀 ~ userSlice.js:21 ~ user/loginAPI, ~ request.data:', request.data)
     return request.data
   }
 )
