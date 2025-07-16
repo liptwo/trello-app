@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box'
 import { useState } from 'react'
 import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
@@ -19,14 +18,15 @@ import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { TextField } from '@mui/material'
+import { IconButton, TextField } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
-import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import { createNewCardAPI, deleteColumnDetailsAPI, updateColumnDetailsAPI } from '~/apis'
 import { cloneDeep } from 'lodash'
 import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import ToggleHeadInput from '~/components/Form/ToggleHeadInput'
 
 
 const Column = ({ column }) => {
@@ -137,9 +137,38 @@ const Column = ({ column }) => {
         toast.success(res?.deleteResult)
       })
     }).catch(() => {})
-
   }
 
+  const onChangedValue = async (newTitle) => {
+    // console.log(newTitle)
+    // console.log('updatedColumn', updatedColumn)
+    // 2. Cập nhật Redux store với dữ liệu column mới
+    // Đảm bảo bạn cloneDeep board để tránh thay đổi trực tiếp state của Redux
+    // const newBoard = cloneDeep(board)
+
+    updateColumnDetailsAPI(column._id, { title: newTitle }).then(() => {
+      const newBoard = cloneDeep(board)
+      const columnToUpdate = newBoard.columns.find(c => c._id === column._id)
+      if (columnToUpdate) columnToUpdate.title = newTitle
+
+      dispatch(updateCurrentActiveBoard(newBoard))
+    })
+    // Cách 1: Sử dụng map() để tạo mảng columns mới với column đã được cập nhật
+    // newBoard.columns = newBoard.columns.map(c => {
+    //   if (c._id === updatedColumn.value._id) {
+    //     // Trả về column đã được cập nhật từ API response
+    //     return {
+    //       ...c,
+    //       title: updatedColumn.value.title
+    //     }
+    //   }
+    //   return c // Giữ nguyên các column khác
+    // })
+    // console.log('newBoard', newBoard)
+    // 3. Dispatch hành động để cập nhật Redux store
+
+
+  }
 
   // phải bọc div vì vấn đề lỗi chiều dài sẽ kéo dài cả màn hình
   return (
@@ -158,29 +187,27 @@ const Column = ({ column }) => {
         {/* Head Column */}
         <Box sx={{
           height:(theme) => theme.trello.headColumnHeight,
-          p:2,
+          pr:1,
+          pl:1,
           pt:3,
+          pb:3,
           display: 'flex',
           alignItems:'center',
           justifyContent:'space-between'
         }}>
-          <Typography variant='h6' sx={{
-            fontWeight:'bold',
-            fontSize:'1rem',
-            cursor:'pointer'
-          }}>
-            { column?.title }
-          </Typography>
+          <ToggleHeadInput headTitle={column?.title || ''} onChangedValue={onChangedValue}/>
           <Box>
             <Tooltip title="Dropdown" arrow>
-              <ExpandMoreIcon
-                sx={{ color:'primary.text.main', cursor:'pointer' }}
-                id="basic-button-expand"
-                aria-controls={open ? 'basic-menu-expand' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-              />
+              <IconButton sx={{ ml:1 }}>
+                <ExpandMoreIcon
+                  sx={{ color:'primary.text.main', cursor:'pointer' }}
+                  id="basic-button-expand"
+                  aria-controls={open ? 'basic-menu-expand' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                />
+              </IconButton>
             </Tooltip>
             <Menu
               id="basic-menu-expand"

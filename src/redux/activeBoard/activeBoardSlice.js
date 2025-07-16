@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import authorizedAxiosInstance from '~/utils/authorizeAxios'
 import { isEmpty } from 'lodash'
+import _ from 'lodash'
 import { API_ROOT } from '~/utils/constants'
 import { generatePlaceHolderCard } from '~/utils/fomatters'
 import mapOrder from '~/utils/sort'
@@ -40,12 +41,45 @@ export const activeBoardSlice = createSlice({
 
       // update lại dữ liệu currentActiveBoard
       state.currentActiveBoard = board
+    },
+    updateCardInBoard: (state, action) => {
+      // nested data
+      const incommingCard = action.payload
+
+      // tìm kiếm column chứa card này
+      const column = state.currentActiveBoard.columns.find(
+        i => i._id === incommingCard.columnId)
+      if ( column ) {
+        const card = column.cards.find(i => i._id === incommingCard._id)
+        if ( card ) {
+          // cập nhật card
+          // cách 1
+          // card.title = incommingCard.title
+          // cách 2
+          Object.assign(card, incommingCard) // sẽ cập nhật tất cả các thuộc tính của card
+          // cách 3: dùng lodash để loại bỏ những thuộc tính không mong muốn
+          // Object.assign(card, _.omit(incommingCard, ['_id'])) // omit để loại bỏ thuộc tính không mong muốn
+          // Cách 4: dùng vòng lặp forEach để cập nhật từng thuộc tính
+          // Object.keys(incommingCard).forEach(key => {
+          //   if (key !== '_id') {
+          //     card[key] = incommingCard[key]
+          //   }
+          // })
+        }
+      }
+    },
+    updateDetailsBoard: (state, action) => {
+      const newDetailBoard = action.payload
+      if (!state.currentActiveBoard) return
+      Object.assign(state.currentActiveBoard, newDetailBoard)
     }
   },
   // extraReducer nơi xử lý dữ liệu bất đồng bộ
   extraReducers: (builder) => {
     builder.addCase(fetchBoardDetailsAPI.fulfilled, (state, action) => {
       let board = action.payload
+
+      board.FE_allUser = board.owners.concat(board.members)
       // xử lý dữ liệu nếu cần thiết
       board.columns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
       board.columns.forEach(column => {
@@ -68,7 +102,7 @@ export const activeBoardSlice = createSlice({
 // thông qua reducer (chạy đồng bộ)
 // Để ý ở trên thì không thấy properties actions đâu cả, bởi vì những cái actions này đơn giản là được
 //thang redux tạo tự động theo tên cua reducer nhé.
-export const { updateCurrentActiveBoard } = activeBoardSlice.actions
+export const { updateCurrentActiveBoard, updateCardInBoard, updateDetailsBoard } = activeBoardSlice.actions
 // Selectors: Là nơi dành cho các components bên dưới gọi bằng hook useselector() để lấy dữ liệu từ trong
 // kho redux store ra sử dụng
 export const selectCurrentActiveBoard = ( state ) => {

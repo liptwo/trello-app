@@ -22,11 +22,12 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
 
-const AppBar = () => {
+const AppBar = ( { color = '' } ) => {
   const [searchValue, setSearchValue] = useState('')
 
   return (
     <Box px={2} sx={{
+      ...(color ? { backgroundColor: color } : { backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125' : '#1565c0') }),
       width: '100vw',
       height: (theme) => theme.trello.headHeight,
       display: 'flex',
@@ -35,25 +36,29 @@ const AppBar = () => {
       padding: '0 20px',
       gap: 2,
       overflow: 'hidden',
-      backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125':'#1565c0')
+      // backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125':'#1565c0')
     }}>
       <Box sx={{
         display: 'flex',
         alignItems: 'center',
         gap: 2
       }}>
-        <AppsIcon fontSize="medium" sx={ { color:'white', cursor:'pointer' } }/>
-        <Box sx={{
-          display: 'flex',
-          gap: 0.5,
-          alignItems: 'center'
-        }}>
-          <SvgIcon
-            component={TrelloIcon} fontSize="small" sx={{ color:'white' } } inheritViewBox/>
-          <Link to={'/'} style={{ textDecoration:'none' }}>
-            <Typography variant='span' sx={{ color:'white', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
+        <Tooltip title="Boards List" arrow>
+          <Link to={'/boards'}>
+            <AppsIcon fontSize="medium" sx={ { color:'white', cursor:'pointer', verticalAlign:'middle' } }/>
           </Link>
-        </Box>
+        </Tooltip>
+        <Link to={'/'}>
+          <Box sx={{
+            display: 'flex',
+            gap: 0.5,
+            alignItems: 'center'
+          }}>
+            <SvgIcon
+              component={TrelloIcon} fontSize="small" sx={{ color:'white' } } inheritViewBox/>
+              <Typography variant='span' sx={{ color:'white', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
+          </Box>
+        </Link>
         <Box sx={{ display: { xs: 'none', md: 'none', lg:'flex' }, gap: 1, alignItems: 'center' }}>
           <WorkSpaces />
           <Recent />

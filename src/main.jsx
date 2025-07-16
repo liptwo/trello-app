@@ -3,7 +3,7 @@
 import ReactDOM from 'react-dom/client'
 import App from '~/App'
 import theme from '~/theme'
-import { Experimental_CssVarsProvider as CssVarProvider } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline, GlobalStyles } from '@mui/material'
 // cấu hình toast
 import { ToastContainer } from 'react-toastify'
@@ -20,6 +20,7 @@ import persistStore from 'redux-persist/es/persistStore'
 // kỹ thuật injectStore xử dụng redux ngoài component
 import { PersistGate } from 'redux-persist/integration/react'
 import { injectStore } from './utils/authorizeAxios'
+// import { SmoothCursor } from './components/ui/smooth-cursor'
 
 
 injectStore(store)
@@ -29,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter basename='/'>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <CssVarProvider theme={theme}>
+        <ThemeProvider theme={theme}>
           <ConfirmProvider defaultOptions={{
             dialogProps: { maxWidth:'xs' },
             confirmationButtonProps: { color: 'error', variant: 'outlined' },
@@ -37,13 +38,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             allowClose: false
           }}
           >
-            <GlobalStyles styles={{ a: { textecoration: 'none' } }}/>
+            <GlobalStyles styles={{ a: { textDecoration: 'none' } }}/> 
 
             <CssBaseline />
             <App />
+            {/* <SmoothCursor /> */}
             <ToastContainer position="bottom-right" autoClose={3000} />
           </ConfirmProvider>
-        </CssVarProvider>
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   </BrowserRouter>

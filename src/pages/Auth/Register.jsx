@@ -1,15 +1,16 @@
-import { Alert, Box, Button, Card as MuiCard, SvgIcon, TextField, Typography } from '@mui/material'
+import { Box, Button, Card as MuiCard, SvgIcon, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import TrelloIcon from '~/assets/trello.svg?react'
 import AppsIcon from '@mui/icons-material/Apps'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import CheckIcon from '@mui/icons-material/Check'
+import { Link, useNavigate } from 'react-router-dom'
 import Zoom from '@mui/material/Zoom'
 import FieldErrorAlert from '~/components/Alert/Alert'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validators'
 import { registerAPI } from '~/apis'
 import { toast } from 'react-toastify'
+import { BorderFire } from '~/components/BorderFire/BorderFire'
+import { BorderBeam } from '~/components/magicui/border-beam'
 
 export default function RegisterForm() {
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
@@ -25,8 +26,10 @@ export default function RegisterForm() {
   return (
 
     <form onSubmit={handleSubmit(submitRegister)}>
-      <Zoom in={true} style={{ transitionDelay: '200ms'}}>
-        <MuiCard sx={{ display: 'flex',
+      <BorderFire>
+        <MuiCard
+          className="relative w-[350px] overflow-hidden"
+          sx={{ display: 'flex',
           flexDirection: 'column',
           justifyContent:'center',
           minWidth: 380,
@@ -36,22 +39,23 @@ export default function RegisterForm() {
           p:2,
           borderRadius:2,
           fontSize:20,
-          fontWeight: 500
+          fontWeight: 500,
+          backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125':'white')
         }}>
           <Box sx={{
             display: 'flex',
             alignItems: 'center',
             gap: 2
           }}>
-            <AppsIcon fontSize="medium" sx={ { color:'black', cursor:'pointer' } }/>
+            <AppsIcon fontSize="medium" sx={ { color:(theme) => (theme.palette.mode === 'dark' ? 'white':'black'), cursor:'pointer' } }/>
             <Box sx={{
               display: 'flex',
               gap: 0.5,
               alignItems: 'center'
             }}>
               <SvgIcon
-                component={TrelloIcon} fontSize="small" sx={{ color:'black' } } inheritViewBox/>
-              <Typography variant='span' sx={{ color:'black', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
+                component={TrelloIcon} fontSize="small" sx={ { color:(theme) => (theme.palette.mode === 'dark' ? 'white':'black')} } inheritViewBox/>
+              <Typography variant='span' sx={ { color:(theme) => (theme.palette.mode === 'dark' ? 'white':'black'), fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
             </Box>
           </Box>
           <Box sx={{ m:2, display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -124,8 +128,13 @@ export default function RegisterForm() {
               </Box>
             </Link>
           </Box>
+          <BorderBeam duration={6}
+            delay={3}
+            size={400}
+            borderWidth={2}
+            className="from-transparent via-red-700 to-transparent"/>
         </MuiCard>
-      </Zoom>
+      </BorderFire>
     </form>
 
   )
