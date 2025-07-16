@@ -1,9 +1,9 @@
-import { Container } from '@mui/material'
+import { Box, Container } from '@mui/material'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 // import { mockData } from '~/apis/Mock-data'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   moveCardOutColumnAPI,
   updateBoardDetailsAPI,
@@ -18,18 +18,31 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
+import ActiveCard from '~/components/Form/ActiveCard/ActiveCard'
+import { selectCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import ChangeBgBoard from '~/components/ChangeBgBoard/ChangeBgBoard'
 
 
 const Board = () => {
-
   const dispatch = useDispatch()
-  // const [board, setBoard] = useState(null)
   const board = useSelector(selectCurrentActiveBoard)
+  const activeCard = useSelector(selectCurrentActiveCard)
   const { boardId } = useParams()
-  useEffect( () => {
-    // call api
-    dispatch( fetchBoardDetailsAPI(boardId) )
-  }, [dispatch, boardId])
+
+  // Thêm state loading
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true) // Hiển thị loading trước khi fetch
+    dispatch(fetchBoardDetailsAPI(boardId)).then(() => {
+      setLoading(false) // Tắt loading khi fetch xong
+    })
+  }, [boardId, dispatch])
+
+  // Hiển thị loading nếu đang fetch dữ liệu
+  if (loading) {
+    return <PageLoadingSpinner caption='Loading Board ...' />
+  }
 
   // xu ly keo tha goi api cap nhap lai vi tri column
   const moveColumns = ( dndOrderedColumns ) => {
@@ -107,24 +120,25 @@ const Board = () => {
 
 
   // console.log(board)
-  if (!board) {
-    return <PageLoadingSpinner caption='Loading Board ...' />
-  }
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
-      <AppBar />
-      <BoardBar board={ board } />
-      <BoardContent
-        board={board}
+      {/* Active Card check đóng mở dựa theo điều kiện có tồn tại không, và mỗi thời điểm chỉ có
+      tồn tại một Modal active Card */}
+      <ActiveCard />
 
-        // createdNewColumn={createdNewColumn}
-        // createdNewCard={createdNewCard}
-        // deleteColumnDetails={deleteColumnDetails}
-
-        moveColumns={moveColumns}
-        moveCardsInColumn={moveCardsInColumn}
-        moveCardsOutColumn={moveCardsOutColumn}
-      />
+      <Box sx={{ ...(board?.boardBg ? { backgroundImage: `url(${board?.boardBg})` } : {} ),
+        backgroundSize: 'cover'
+      }}>
+        <AppBar color={board?.domicantColor} />
+        <BoardBar board={ board } />
+        <BoardContent
+          board={board}
+          moveColumns={moveColumns}
+          moveCardsInColumn={moveCardsInColumn}
+          moveCardsOutColumn={moveCardsOutColumn}
+        />
+        <ChangeBgBoard color={board?.domicantColor} />
+      </Box>
     </Container>
   )
 }

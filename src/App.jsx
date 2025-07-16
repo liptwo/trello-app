@@ -1,12 +1,13 @@
 import { Link, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Board from '~/pages/Boards/_id'
+import Boards from '~/pages/Boards'
 import NotFound from './pages/404/NotFound'
 import Auth from './pages/Auth/Auth'
 import AccountVerification from './pages/Auth/AccountVerification'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import Settings from '~/pages/Settings/Settings'
-
+import './App.css'
 // Cách 2 xử lý đã đăng nhập 
 // * Giải pháp Clean Code trong việc xác định các route nào cần đăng nhập tài khoản xong thì mới cho truy cập
 // * Sử dụng <Outlet /> của react-router-dom để hiển thị các Child Route (xem cách sử dụng trong App() bên
@@ -32,7 +33,7 @@ function App() {
         // trong history của Browser
         // Thực hành dễ hiểu hơn bằng cách nhân Go Home từ trang 404 xong thử quay lại bằng nút back của trình
         // duyệt giữa 2 trường hợp có replace hoặc không có.
-        <Navigate to={'/boards/683f14b3bd5db6a299b0828a'}
+        <Navigate to={'/boards'}
           replace={true}
         />
       } />
@@ -42,6 +43,7 @@ function App() {
         {/* // <Outlet/> của react router dom sẽ chạy vào các child route trong này */}
 
         {/*  board detail */}
+        <Route path='/boards/' element={ <Boards/> }/>
         <Route path='/boards/:boardId' element={ <Board/> }/>
         {/* // Profile userr */}
         <Route path='/settings/account' element={<Settings/>} />

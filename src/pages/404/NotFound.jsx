@@ -3,7 +3,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 const bg = './src/assets/bg.png'
 import astronaut from '~/assets/astronaut.png'
-
+import { RetroGrid } from "~/components/magicui/retro-grid"
+import { MorphingText } from "~/components/magicui/morphing-text";
 // Animation cho astronaut
 const flyAcrossScreen = keyframes`
   0% {
@@ -71,13 +72,11 @@ const NotFound = () => {
       />
 
       {/* Nội dung 404 */}
-      <Box sx={{ textAlign: 'center', zIndex: 2 }}>
-        <Typography
-          sx={{ color: 'white', fontWeight: 'medium' }}
-          variant="h1"
-        >
-          404 Not Found!!!
+      <Box sx={{width: '1000px', textAlign: 'center', zIndex: 2 }}>
+        <Typography variant="h1" sx={{ mb: 2, color: 'white' }}>
+          <MorphingText className=' flex text-nowrap items-center justify-center' texts={["404 Not Found!"]} /> 
         </Typography>
+
         <Typography variant="h6" sx={{ mb: 4, color: 'red' }}>
           This space has lost its way in the universe...
         </Typography>
@@ -91,6 +90,7 @@ const NotFound = () => {
           </Button>
         </Link>
       </Box>
+      <RetroGrid cellSize={120} opacity={0.2}/>
     </Box>
   )
 }

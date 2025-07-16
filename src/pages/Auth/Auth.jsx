@@ -1,12 +1,11 @@
-import { Box, Typography } from '@mui/material'
-import React from 'react'
+import { Box, Typography, useColorScheme } from '@mui/material'
+import React, { useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import LoginForm from './Login'
 import RegisterForm from './Register'
 const bg = 'src/assets/loginBg.png'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-// import TextFlagCursor from '~/components/TextFlagCursor/TextFlagCursor'
 
 function Auth() {
   const location = useLocation()
@@ -19,7 +18,7 @@ function Auth() {
   if ( currentUser ) {
     return <Navigate to='/' replace={true} />
   }
-
+   
   return (
     <Box sx={{
       display: 'flex',
@@ -34,7 +33,8 @@ function Auth() {
       boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.2)'
     }}>
       {/* <TextFlagCursor
-        text='Liptwo Trello'
+        text=' 🎉🎉🎉🐴 '
+        emoji='true'
         color='blue'
         font='monospace'
         textSize={12} /> */}

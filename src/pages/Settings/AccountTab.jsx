@@ -13,8 +13,8 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
 
 import { FIELD_REQUIRED_MESSAGE, singleFileValidator } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Alert/Alert'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentUser, updateUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 // import { useState } from 'react'
@@ -37,7 +37,7 @@ const VisuallyHiddenInput = styled('input')({
 
 function AccountTab() {
   const currentUser = useSelector(selectCurrentUser)
-
+  const dispatch = useDispatch()
   // Những thông tin của user để init vào form (key tương ứng với register
   const initialGeneralForm = {
     displayName: currentUser?.displayName
@@ -50,13 +50,20 @@ function AccountTab() {
   // const [avatar, setAvatar] = useState(null)
   const submitChangeGeneralInformation = (data) => {
     const { displayName } = data
-    console. log ('displayName: ', displayName)
 
     // Nếu không có sự thay đồi gì về displayname thì không làm gì cả
-    if (displayName === currentUser?.displayName) return
+    if (displayName === currentUser?.displayName) return toast.error('No changes detected in display name!')
 
     // Gọi API ...
+    toast.promise(dispatch(updateUserAPI({ displayName: displayName })), { pending: 'Changing...' })
+      .then((res) => {
+        if ( !res.error) {
+          // Nếu không có lỗi thì thông báo thành công
+          toast.success('Display name updated successfully!')
+        }
+      })
     // toast.success('Display name updated successfully!')
+
   }
 
   const uploadAvatar = (e) => {
@@ -72,11 +79,21 @@ function AccountTab() {
     let reqData = new FormData()
     reqData.append('avatar', e.target?.files[0])
     // Cách để log được dữ liệu thông qua FormData
-    console.log('reqData: ', reqData)
-    for (const value of reqData.values()) {
-      console.log('reqData Value: ', value)
-    }
+    // console.log('reqData: ', reqData)
+    // for (const value of reqData.values()) {
+    //   console.log('reqData Value: ', value)
+    // }
     // Gọi API ...
+
+    toast.promise(dispatch(updateUserAPI(reqData)), { pending: 'Changing...' })
+      .then((res) => {
+        if ( !res.error) {
+          // Nếu không có lỗi thì thông báo thành công
+          toast.success('User updated successfully!')
+        }
+        // dù thành công hay lỗi thì phải clear giá trị của fileInput, để tránh lỗi không chọn tiếp được file
+        e.target.value = ''
+      })
   }
   return (
     <Box sx={{
@@ -102,6 +119,7 @@ function AccountTab() {
               sx={{ width: 84, height: 84, mb: 1 }}
               alt={currentUser?.displayName}
               src={currentUser?.avatar ? currentUser.avatar : {} }
+              sizes="small"
             />
             <Tooltip title="Upload a new image to update your avatar immediately.">
               <Button

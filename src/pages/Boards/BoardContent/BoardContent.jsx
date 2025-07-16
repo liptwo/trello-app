@@ -18,7 +18,25 @@ import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceHolderCard } from '~/utils/fomatters'
 import { MouseSensor, TouchSensor } from '~/customLibrary/dndKitSencors'
+import confetti from 'canvas-confetti'
 
+const ConfettiFireworks = (cardId) => {
+  const cardElement = document.getElementById(`card-${cardId}`)
+  if (!cardElement) return
+
+  const rect = cardElement.getBoundingClientRect()
+
+  confetti({
+    origin: {
+      x: (rect.left + rect.width / 2) / window.innerWidth,
+      y: (rect.top + rect.height / 2) / window.innerHeight
+    },
+    particleCount: 80,
+    spread: 100,
+    startVelocity: 30,
+    zIndex: 9999
+  })
+}
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_COLUMN',
@@ -213,6 +231,12 @@ const BoardContent = ({ board,
           activeDraggingCardData,
           'handleDragEnd'
         )
+        if (overColumn.title.includes('🎉')) {
+          setTimeout(() => {
+            ConfettiFireworks(activeDraggingCardId) // Gọi sau khi DOM update
+          }, 200) // delay nhẹ để DOM cập nhật xong
+        }
+        // console.log(activeColumn)
       } else {
         // console.log('Hanh động kéo thả card cùng 1 column')
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(c => c._id === activeDragItemId)
@@ -231,7 +255,7 @@ const BoardContent = ({ board,
           return nextColumns
         })
 
-        // goi api de cap nhap card khi ma co vi tri moi
+        // goi api de cap nhat card khi ma co vi tri moi
         if (oldCardIndex !== newCardIndex) {
           moveCardsInColumn( dndOrderedCards, dedOrderedCardIds, oldColumnWhenDraggingCard._id )
         }
@@ -271,6 +295,10 @@ const BoardContent = ({ board,
         }
       }
     })
+    // duration: 300,
+    // easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+    // dragSourceOpacity: 0.5,
+
   }
   // custom thuật toán phát hiện va chạm để fix bug
   const collisionDectectionStratery = useCallback((args) => {
@@ -317,7 +345,7 @@ const BoardContent = ({ board,
       onDragEnd={handleDragEnd} sensors={sensors}
     >
       <Box sx={{
-        backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#005485' : '#0079bf'),
+        ...(!board?.boardBg ? { backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#005485' : '#0079bf') } : {}),
         width: '100%',
         height: (theme) => theme.trello.boardContentHeight,
         p: '10px 0'

@@ -1,6 +1,6 @@
 // src/theme.js
 
-import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles';
 // import { blue, deepOrange, orange, teal } from '@mui/material/colors'
 
 const HEAD_HEIGHT = '58px'
@@ -9,7 +9,7 @@ const BOARD_CONTENT_HEIGHT = `calc(100vh - ${ HEAD_HEIGHT} - ${BOARD_BAR_HEIGHT}
 const HEAD_COLUMN_HEIGHT = '45px'
 const FOOTER_COLUMN_HEIGHT = '56px'
 
-const theme = extendTheme({
+const theme = createTheme({
   trello: {
     headHeight: HEAD_HEIGHT,
     boardBarHeight: BOARD_BAR_HEIGHT,

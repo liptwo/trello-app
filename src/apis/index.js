@@ -14,6 +14,12 @@ import { API_ROOT } from '~/utils/constants'
 // }
 
 // Columns
+export const createBoard = async ( data ) => {
+  const respone = await authorizedAxiosInstance.post(`${API_ROOT}/v1/boards`, data)
+  return respone.data
+}
+
+// Columns
 export const createNewColumnAPI = async ( newColumnData ) => {
   const respone = await authorizedAxiosInstance.post(`${API_ROOT}/v1/columns`, newColumnData)
   return respone.data
@@ -35,7 +41,7 @@ export const updateBoardDetailsAPI = async( boardId, updateData ) => {
 }
 
 export const moveCardOutColumnAPI = async( updateData ) => {
-  console.log(updateData)
+  // console.log(updateData)
   const request = await authorizedAxiosInstance.put(`${API_ROOT}/v1/boards/support/moving_card`, updateData)
   return request.data
 }
@@ -64,10 +70,30 @@ export const verifyUserApi = async ( data ) => {
   return request.data
 }
 
-export const refreshTokenAPI = async ( data ) => {
-  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`, data)
+export const refreshTokenAPI = async ( ) => {
+  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`)
   // toast.success('Account verified successfully! Now you can login to enjoy to our services!', { theme: 'colored' })
   return request.data
 }
 
 
+export const fetchBoardsApi = async ( searchPath ) => {
+  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards`, searchPath)
+  return request.data
+}
+// export const updateColumnApi = async ( data ) => {
+//   const request = await authorizedAxiosInstance.put(`${API_ROOT}/v1/columns`, data)
+//   return request.data
+// }
+
+export const updateCardDetailsAPI = async( cardId, updateData ) => {
+  // console.log(updateData)
+  const request = await authorizedAxiosInstance.put(`${API_ROOT}/v1/cards/${cardId}`, updateData)
+  return request.data
+}
+
+export const inviteUserToBoardAPI = async (data) => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/invitations/board`, data)
+  toast. success('User invited to board successfully!')
+  return response.data
+}

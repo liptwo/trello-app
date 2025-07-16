@@ -9,8 +9,29 @@ import CommentIcon from '@mui/icons-material/Comment'
 import InsertLinkIcon from '@mui/icons-material/InsertLink'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useDispatch } from 'react-redux'
+import { showActiveCard, updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { useEffect, useState } from 'react'
+import pickDominantColor from '~/utils/pickDominantColor'
 
 function Card({ card }) {
+  const dispatch = useDispatch()
+  const cardWithoutSortable = { ...card }
+
+  const [bgColor, setBgColor] = useState(card?.dominantColor)
+  useEffect(() => {
+    if (card?.cover) {
+      pickDominantColor(card.cover).then(color => {
+        setBgColor(color)
+      }).catch(() => {
+        setBgColor('white')
+      })
+    } else {
+      setBgColor('white')
+    }
+  }
+  , [card?.cover])
+  // console.log('before', card)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({ id: card._id, data: { ...card } })
 
@@ -21,23 +42,41 @@ function Card({ card }) {
     opacity: isDragging ? 0.5 : undefined,
     border: isDragging ? '1px solid #FFA725' : undefined
   }
-
+  // const result = card.map(({ sortable, ...card }) => card )
+  const handleClickCard = () => {
+    dispatch(updateCurrentActiveCard( cardWithoutSortable ) )
+    dispatch(showActiveCard())
+  }
 
   const shouldShowAction = () => {
     return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.memberIds?.length
   }
-  return (
 
-    <MuiCard ref={setNodeRef} style={dndColumnStyle} {...attributes} {...listeners}
+  // console.log('after', card)
+  return (
+    <MuiCard
+      // thêm id để bắn pháo hoa đúng cách
+      id={`card-${card._id}`}
+      onClick={handleClickCard}
+      ref={setNodeRef} style={dndColumnStyle} {...attributes} {...listeners}
       sx={{ cursor:'pointer', overflow:'unset', boxShadow:'0px 1px 1px #091e4240, 0px 0px 1px #091e424f', borderRadius: (card.cover ? '12px':'8px')
         , display: card?.FE_PlaceholderCard ? 'none' : 'block',
-        border: '1px solid transparent',
+        // border: '1px solid transparent',
         '&:hover': { borderColor: (theme) => theme.palette.primary.main }
-
       }}>
       {card?.cover && (
         <CardMedia
-          sx={{ maxHeight:'400px', height:'250px', borderTopLeftRadius:'12px', borderTopRightRadius:'12px' }}
+          sx={{
+            width: '100%',
+            backgroundColor: `${ bgColor }`,
+            height: 'auto',
+            maxHeight: '200px',
+            borderTopLeftRadius: '12px',
+            borderTopRightRadius: '12px',
+            objectFit: 'contain', // hoặc 'contain' nếu muốn toàn bộ ảnh luôn hiển thị
+            // transition: 'background-color 1s ease'
+          }}
+          component="img"
           image={card.cover}
           title="green iguana"
         />)
@@ -61,7 +100,6 @@ function Card({ card }) {
           )}
         </CardActions>
       }
-
     </MuiCard>
   )
 }

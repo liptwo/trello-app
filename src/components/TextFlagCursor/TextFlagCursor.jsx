@@ -19,8 +19,17 @@ export const TextFlagCursor = (options) => {
     let width = window.innerWidth
     let height = window.innerHeight
     let cursor = { x: width / 2, y: width / 2 }
-    for (let i = 0; i < text.length; i++) {
-      charArray[i] = { letter: text.charAt(i), x: width / 2, y: width / 2 }
+    if (options.emoji === 'true') {
+      const emojiRegex = /\p{Emoji}/gu
+      const textAr = text.match(emojiRegex)
+      console.log(textAr)
+      for (let i = 0; i < textAr.length ; i++) {
+        charArray[i] = { letter: textAr[i], x: width / 2, y: width / 2 }
+      }
+    } else {
+      for (let i = 0; i < text.length; i++) {
+        charArray[i] = { letter: text.charAt(i), x: width / 2, y: width / 2 }
+      }
     }
     let canvas, context, animationFrame
     const prefersReducedMotion = window.matchMedia(
