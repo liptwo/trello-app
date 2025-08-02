@@ -1,4 +1,4 @@
-import { Link, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Board from '~/pages/Boards/_id'
 import Boards from '~/pages/Boards'
 import NotFound from './pages/404/NotFound'
@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import Settings from '~/pages/Settings/Settings'
 import './App.css'
-// Cách 2 xử lý đã đăng nhập 
+// Cách 2 xử lý đã đăng nhập
 // * Giải pháp Clean Code trong việc xác định các route nào cần đăng nhập tài khoản xong thì mới cho truy cập
 // * Sử dụng <Outlet /> của react-router-dom để hiển thị các Child Route (xem cách sử dụng trong App() bên
 // dưới)

@@ -4,16 +4,12 @@ import { useForm } from 'react-hook-form'
 import TrelloIcon from '~/assets/trello.svg?react'
 import AppsIcon from '@mui/icons-material/Apps'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
-// import Zoom from '@mui/material/Zoom'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Alert/Alert'
 import { useDispatch } from 'react-redux'
 import { loginAPI } from '~/redux/user/userSlice'
 import { toast } from 'react-toastify'
 import theme from '~/theme'
-import { BorderBeam } from '~/components/magicui/border-beam'
-// import { Meteors } from "~/components/magicui/meteors"
-import { BorderFire } from '~/components/BorderFire/BorderFire'
 export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   let [searchParams] = useSearchParams()
@@ -45,7 +41,6 @@ export default function LoginForm() {
           minWidth: 380,
           maxWidth:380,
           marginTop:'6em',
-          backgroundColor:'white',
           p:2,
           borderRadius:2,
           fontSize:20,

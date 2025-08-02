@@ -5,76 +5,119 @@ import AppsIcon from '@mui/icons-material/Apps'
 import TrelloIcon from '~/assets/trello.svg?react'
 import SvgIcon from '@mui/material/SvgIcon'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import WorkSpaces from './Menus/WorkSpaces'
 import Recent from './Menus/Recent'
 import Started from './Menus/Started'
 import Templates from './Menus/Templates'
-import Badge from '@mui/material/Badge'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import Profiles from './Menus/Profiles'
 import QueueIcon from '@mui/icons-material/Queue'
-import InputAdornment from '@mui/material/InputAdornment'
-import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
+import Notifications from './Notifications/Notifications'
+import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
 
-const AppBar = ( { color = '' } ) => {
+const AppBar = ({ color = '' }) => {
   const [searchValue, setSearchValue] = useState('')
 
   return (
-    <Box px={2} sx={{
-      ...(color ? { backgroundColor: color } : { backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125' : '#1565c0') }),
-      width: '100vw',
-      height: (theme) => theme.trello.headHeight,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 20px',
-      gap: 2,
-      overflow: 'hidden',
-      // backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125':'#1565c0')
-    }}>
-      <Box sx={{
+    <Box
+      px={2}
+      sx={{
+        ...(color
+          ? { backgroundColor: color }
+          : {
+            backgroundColor: (theme) =>
+              theme.palette.mode === 'dark' ? '#1d2125' : '#1565c0'
+          }),
+        width: '100vw',
+        height: (theme) => theme.trello.headHeight,
         display: 'flex',
         alignItems: 'center',
-        gap: 2
-      }}>
-        <Tooltip title="Boards List" arrow>
+        justifyContent: 'space-between',
+        padding: '0 20px',
+        gap: 2,
+        overflow: 'hidden'
+        // backgroundColor: (theme) => (theme.palette.mode === 'dark' ? '#1d2125':'#1565c0')
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}
+      >
+        <Tooltip title='Boards List' arrow>
           <Link to={'/boards'}>
-            <AppsIcon fontSize="medium" sx={ { color:'white', cursor:'pointer', verticalAlign:'middle' } }/>
+            <AppsIcon
+              fontSize='medium'
+              sx={{
+                color: 'white',
+                cursor: 'pointer',
+                verticalAlign: 'middle'
+              }}
+            />
           </Link>
         </Tooltip>
         <Link to={'/'}>
-          <Box sx={{
-            display: 'flex',
-            gap: 0.5,
-            alignItems: 'center'
-          }}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 0.5,
+              alignItems: 'center'
+            }}
+          >
             <SvgIcon
-              component={TrelloIcon} fontSize="small" sx={{ color:'white' } } inheritViewBox/>
-              <Typography variant='span' sx={{ color:'white', fontSize: '1.2rem', fontWeight: 'bold' } }>Trello</Typography>
+              component={TrelloIcon}
+              fontSize='small'
+              sx={{ color: 'white' }}
+              inheritViewBox
+            />
+            <Typography
+              variant='span'
+              sx={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold' }}
+            >
+              Trello
+            </Typography>
           </Box>
         </Link>
-        <Box sx={{ display: { xs: 'none', md: 'none', lg:'flex' }, gap: 1, alignItems: 'center' }}>
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'none', lg: 'flex' },
+            gap: 1,
+            alignItems: 'center'
+          }}
+        >
           <WorkSpaces />
           <Recent />
           <Started />
           <Templates />
-          <Button variant="outlined" sx={ { color:'white', border:'none', '&:hover':{
-            border:'none'
-          } } } startIcon={<QueueIcon />}>Outlined</Button>
+          <Button
+            variant='outlined'
+            sx={{
+              color: 'white',
+              border: 'none',
+              '&:hover': {
+                border: 'none'
+              }
+            }}
+            startIcon={<QueueIcon />}
+          >
+            Outlined
+          </Button>
         </Box>
       </Box>
-      <Box sx={{
-        display: 'flex',
-        gap: 2,
-        alignItems: 'center'
-      }}>
-        <TextField
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          alignItems: 'center'
+        }}
+      >
+        <AutoCompleteSearchBoard />
+        {/* <TextField
           id="outlined-search"
           label="Search ..."
           variant="outlined"
@@ -111,15 +154,11 @@ const AppBar = ( { color = '' } ) => {
               '&.Mui-focused fieldset':{ borderColor:'white' }
             }
           } }
-        />
+        /> */}
         <ModeSelect />
-        <Tooltip title="Notifications" arrow>
-          <Badge color="warning" variant="dot" sx={ { cursor:'pointer' } }>
-            <NotificationsNoneIcon sx={{ color:'white' }} />
-          </Badge>
-        </Tooltip>
-        <Tooltip title="Help" arrow>
-          <HelpOutlineIcon sx={ { color:'white', cursor:'pointer' } } />
+        <Notifications />
+        <Tooltip title='Help' arrow>
+          <HelpOutlineIcon sx={{ color: 'white', cursor: 'pointer' }} />
         </Tooltip>
         <Profiles />
       </Box>

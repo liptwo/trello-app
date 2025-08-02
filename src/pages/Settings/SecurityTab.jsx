@@ -1,16 +1,9 @@
 
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Avatar from '@mui/material/Avatar'
-import Tooltip from '@mui/material/Tooltip'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import Button from '@mui/material/Button'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import MailIcon from '@mui/icons-material/Mail'
-import AccountBoxIcon from '@mui/icons-material/AccountBox'
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd'
-
 import { FIELD_REQUIRED_MESSAGE, PASSWORD_RULE, PASSWORD_RULE_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Alert/Alert'
 // import { useSelector } from 'react-redux'

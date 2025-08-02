@@ -22,7 +22,6 @@ import ActiveCard from '~/components/Form/ActiveCard/ActiveCard'
 import { selectCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 import ChangeBgBoard from '~/components/ChangeBgBoard/ChangeBgBoard'
 
-
 const Board = () => {
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
@@ -45,8 +44,8 @@ const Board = () => {
   }
 
   // xu ly keo tha goi api cap nhap lai vi tri column
-  const moveColumns = ( dndOrderedColumns ) => {
-    const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
+  const moveColumns = (dndOrderedColumns) => {
+    const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id)
     /**
     * Trường hợp dùng Spread Operator này thì lại không sao bởi vì ở đây chúng ta không dùng push như ở trên
     làm thay đổi trực tiếp kiểu mở rộng mảng, mà chỉ đang gán lại toàn bộ giá trị columns và columnOrderIds
@@ -60,11 +59,13 @@ const Board = () => {
     dispatch(updateCurrentActiveBoard(newBoard))
 
     //gọi api update board
-    updateBoardDetailsAPI(newBoard._id, { columnOrderIds: newBoard.columnOrderIds })
+    updateBoardDetailsAPI(newBoard._id, {
+      columnOrderIds: newBoard.columnOrderIds
+    })
   }
   // goi api cap nhap vi tri cards trong cung 1 column chi can cap nhap lai
   // cardOrderIds la oke la
-  const moveCardsInColumn = ( dndOrderedCards, dedOrderedCardIds, columnId ) => {
+  const moveCardsInColumn = (dndOrderedCards, dedOrderedCardIds, columnId) => {
     // update chuan state board
     // const newBoard = { ...board }
 
@@ -72,7 +73,9 @@ const Board = () => {
     // trường hợp này Immutability ở đây đụng tới giá trị card đang được coi là chỉ đọc read only
     // dạng nested object - can thiệp sâu dữ liệu
     const newBoard = cloneDeep(board)
-    const columnToAdd = newBoard.columns.find(column => column._id === columnId)
+    const columnToAdd = newBoard.columns.find(
+      (column) => column._id === columnId
+    )
 
     if (columnToAdd) {
       columnToAdd.cards = dndOrderedCards
@@ -81,7 +84,7 @@ const Board = () => {
     // console.log('columnToAdd', columnToAdd)
     dispatch(updateCurrentActiveBoard(newBoard))
     //gọi api update column
-    updateColumnDetailsAPI( columnId, { cardOrderIds: dedOrderedCardIds })
+    updateColumnDetailsAPI(columnId, { cardOrderIds: dedOrderedCardIds })
   }
   // * Khi di chuyển card sang Column khác:
   // * B1: Cập nhật mằng cardOrderIds của Column ban đầu chứa nó (Hiểu bản chất là xóa cái id của Card ra khoir
@@ -90,34 +93,43 @@ const Board = () => {
   // * B3: Cập nhật lại trường columnId mới của cái Card đã kéo
   // * => Làm một API support riêng.
   // update chuan state board
-  const moveCardsOutColumn = ( currentCardId, prevColumnId, nextColumnId, dndOrderedColumns ) => {
+  const moveCardsOutColumn = (
+    currentCardId,
+    prevColumnId,
+    nextColumnId,
+    dndOrderedColumns
+  ) => {
     // console.log('currentCardId: ', currentCardId)
     // console.log('prevColumnId: ', prevColumnId)
     // console.log('nextColumnId: ', nextColumnId)
     // console.log('dndOrderedColumn: ', dndOrderedColumns)
 
-    const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
+    const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id)
     // làm mượt giao diện
     const newBoard = { ...board }
     newBoard.columns = dndOrderedColumns
     newBoard.columnOrderIds = dndOrderedColumnsIds
     dispatch(updateCurrentActiveBoard(newBoard))
 
-    let preCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
+    let preCardOrderIds = dndOrderedColumns.find(
+      (c) => c._id === prevColumnId
+    )?.cardOrderIds
     // console.log(preCardOrderIds)
     // xử lý vấn đề khi kéo card cuối cùng ra khỏi column
     // có placeholder cần xóa nó đi trước khi gửi dữ liệu lên be
-    if (preCardOrderIds[0].includes('placeholder-card')) { preCardOrderIds = []}
+    if (preCardOrderIds[0].includes('placeholder-card')) {
+      preCardOrderIds = []
+    }
     // goi api xu ly phia be
     moveCardOutColumnAPI({
       currentCardId,
       prevColumnId,
       preCardOrderIds,
       nextColumnId,
-      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+      nextCardOrderIds: dndOrderedColumns.find((c) => c._id === nextColumnId)
+        ?.cardOrderIds
     })
   }
-
 
   // console.log(board)
   return (
@@ -126,11 +138,19 @@ const Board = () => {
       tồn tại một Modal active Card */}
       <ActiveCard />
 
-      <Box sx={{ ...(board?.boardBg ? { backgroundImage: `url(${board?.boardBg})` } : {} ),
-        backgroundSize: 'cover'
-      }}>
+      <Box
+        sx={{
+          ...(board?.boardBg
+            ? { backgroundImage: `url(${board?.boardBg})` }
+            : {}),
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+          backgroundPosition: 'center'
+        }}
+      >
         <AppBar color={board?.domicantColor} />
-        <BoardBar board={ board } />
+        <BoardBar board={board} />
         <BoardContent
           board={board}
           moveColumns={moveColumns}

@@ -1,5 +1,5 @@
-import { Box, Typography, useColorScheme } from '@mui/material'
-import React, { useEffect } from 'react'
+import { Box, Typography } from '@mui/material'
+import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import LoginForm from './Login'
 import RegisterForm from './Register'
@@ -18,7 +18,7 @@ function Auth() {
   if ( currentUser ) {
     return <Navigate to='/' replace={true} />
   }
-   
+
   return (
     <Box sx={{
       display: 'flex',
