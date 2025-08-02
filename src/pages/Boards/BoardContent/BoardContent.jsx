@@ -240,7 +240,9 @@ const BoardContent = ({ board,
       } else {
         // console.log('Hanh động kéo thả card cùng 1 column')
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(c => c._id === activeDragItemId)
-        const newCardIndex = overColumn?.cards?.findIndex(column => column._id === overCardId)
+        let newCardIndex = overColumn?.cards?.findIndex(c => c._id === overCardId)
+        // Nếu kéo xuống thì phải trừ đi 1 để tránh flicker
+        if (oldCardIndex < newCardIndex) newCardIndex--
         // arraymove sort aray
         // same when boardcontent
         const dndOrderedCards = arrayMove(oldColumnWhenDraggingCard?.cards, oldCardIndex, newCardIndex)

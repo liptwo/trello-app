@@ -25,6 +25,7 @@ import { injectStore } from './utils/authorizeAxios'
 
 injectStore(store)
 
+
 const persistor = persistStore(store)
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter basename='/'>

@@ -78,7 +78,7 @@ export const refreshTokenAPI = async ( ) => {
 
 
 export const fetchBoardsApi = async ( searchPath ) => {
-  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards`, searchPath)
+  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards${searchPath}`)
   return request.data
 }
 // export const updateColumnApi = async ( data ) => {

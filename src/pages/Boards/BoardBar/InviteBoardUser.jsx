@@ -4,6 +4,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { useForm } from 'react-hook-form'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import { inviteUserToBoardAPI } from '~/apis'
+import { socketIoInstance } from '~/socketClient'
 
 const InviteBoardUser = ( { boardId } ) => {
   const [anchorPopperEl, setAnchorPopperEl] = useState(false)
@@ -21,11 +22,18 @@ const InviteBoardUser = ( { boardId } ) => {
     formState: { errors }
   } = useForm()
   const submitInviteUserToBoard = (data) => {
-    const { invitedEmail } = data
-    inviteUserToBoardAPI({ invitedEmail, boardId }).then( () => {
+    const { inviteeEmail } = data
+    inviteUserToBoardAPI({ inviteeEmail, boardId }).then( invitation => {
 
-      setValue('invitedEmail', null)
+      setValue('inviteeEmail', null)
       setAnchorPopperEl(null)
+
+      // Mời một người dùng vào board xong thì cũng sẽ gửi email sự kiện socket lên server
+      // tính năng realtime
+      // ...
+      // gửi socket io dùng emit('tên sự kiện', data)
+      socketIoInstance.emit('FE_USER_INVITED_TO_BOARD', invitation)
+
     })
 
   }
@@ -65,11 +73,11 @@ const InviteBoardUser = ( { boardId } ) => {
                   label="Enter email to invite ... "
                   type="text"
                   variant="outlined"
-                  { ... register('invitedEmail', {
+                  { ... register('inviteeEmail', {
                     required: FIELD_REQUIRED_MESSAGE,
                     pattern: { value: EMAIL_RULE, message: EMAIL_RULE_MESSAGE }
                   })}
-                  error={! !errors ['invitedEmail' ]}
+                  error={! !errors ['inviteeEmail' ]}
                 />
               </Box>
 
